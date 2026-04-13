@@ -86,23 +86,14 @@ if [ -e $MODDIR/system/etc/localization/AuthManager ] ;then
     fail_install
 fi
 
-if [ ! -e /sdcard/Download/MiuiEuLocalization.ini ] ;then
-    # Auto-generated INI should exist now, this check might fail if logic is checking external sdcard
-    # But since we generate it in $MODPATH, we should probably update this check if it looks for /sdcard specific
-    # The original script looks at /sdcard/Download/MiuiEuLocalization.ini OR $MODPATH/MiuiEuLocalization.ini?
-    # Original script line 89: if [ ! -e /sdcard/Download/MiuiEuLocalization.ini ]
-    # Wait, original script was sourcing /sdcard/Download/MiuiEuLocalization.ini!
-    # I need to change it to source $MODPATH/MiuiEuLocalization.ini as well!
-    
-    # Let's fix the sourcing path first.
-    if [ -e $MODPATH/MiuiEuLocalization.ini ]; then
-        . $MODPATH/MiuiEuLocalization.ini
-    elif [ -e /sdcard/Download/MiuiEuLocalization.ini ]; then
-         . /sdcard/Download/MiuiEuLocalization.ini
-    else
-         # Should not happen as we generate it
-         ui_print "- Config not found, using defaults."
-    fi
+if [ -e $MODPATH/HyperOS3EULocalization.ini ]; then
+    . $MODPATH/HyperOS3EULocalization.ini
+elif [ -e /sdcard/Download/MiuiEuLocalization.ini ]; then
+    . /sdcard/Download/MiuiEuLocalization.ini
+elif [ -e $MODPATH/MiuiEuLocalization.ini ]; then
+    . $MODPATH/MiuiEuLocalization.ini
+else
+    ui_print "- Config not found, using defaults."
 fi
 
 # Warning Checking
