@@ -167,7 +167,6 @@ else
         set_config "AiAsst" "true"
         set_config "VoiceTrigger" "true"
         set_config "Contacts" "true"
-        set_config "MiPush" "true"
     else
         print_info "已跳过"
     fi
@@ -176,7 +175,7 @@ else
     ui_print "  ┌─────────────────────────────────────────────────────────────┐"
     ui_print "  │  Q2.5: 小米推送 MiPush (CN 区)                              │"
     ui_print "  │      切换 XMSF 推送服务器至中国区                            │"
-    ui_print "  │      (已选 Q2 则此项已自动启用)                              │"
+    ui_print "  │      (可独立启用，不依赖小爱同学)                             │"
     ui_print "  └─────────────────────────────────────────────────────────────┘"
     if vk_choose; then
         print_success "已选中：MiPush CN 区"
