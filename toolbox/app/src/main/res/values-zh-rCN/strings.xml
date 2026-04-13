@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">HyperOS3 EU 本地化工具箱</string>
+    <string name="mainactivity_textview_device_state">设备状态</string>
+    <string name="mainactivity_textview_root_state">Root 状态: </string>
+    <string name="mainactivity_textview_xposed_module_state">Xposed 模块: </string>
+    <string name="mainactivity_textview_magisk_module_state">模块版本: </string>
+    <string name="mainactivity_textview_toolsbox_version">工具箱版本: </string>
+    <string name="mainactivity_button_refresh_device_state">刷新状态</string>
+    <string name="mainactivity_button_reset_app_permission">重置应用权限</string>
+    <string name="mainactivity_button_grant_system_app_permission">修复系统应用权限</string>
+    <string name="mainactivity_button_hide_theme_folder">隐藏主题文件夹</string>
+    <string name="mainactivity_button_allow_install_system_app">允许安装系统应用</string>
+    <string name="mainactivity_button_package_error_log">打包日志</string>
+    <string name="mainactivity_button_delete_error_log">清除日志</string>
+    <string name="mainactivity_toast_nonroot">设备未 Root 或工具箱无 Root 权限</string>
+    <string name="mainactivity_toast_processing">处理中，请稍候...</string>
+    <string name="mainactivity_toast_process_success">操作成功</string>
+    <string name="mainactivity_toast_process_failed">操作失败</string>
+    <string name="mainactivity_text_check_app_version_failed">检测失败</string>
+    <string name="mainactivity_text_xposed_module_activated">已激活</string>
+    <string name="mainactivity_text_xposed_module_inactivated">未激活</string>
+    <string name="mainactivity_text_magisk_module_not_installed">未安装</string>
+    <string name="mainactivity_toast_magisk_module_tools_not_match">工具箱版本与模块版本不一致</string>
+    <string name="mainactivity_toast_not_magisk_module_installed">未检测到已安装的模块</string>
+    <string name="mainactivity_toast_package_error_log_success">已保存至 /sdcard/HyperOS3EULocalization/ErrorLog.tar\n日志包含设备信息，请勿公开</string>
+    <string name="mainactivity_button_clean_package_cache">清除包缓存</string>
+    <string name="mainactivity_button_reset_package_restriction">重置包限制</string>
+    <string name="tool_desc_reset_permission">清除权限缓存并重启，修复权限异常</string>
+    <string name="tool_desc_fix_permission">为本地化应用补全系统权限</string>
+    <string name="tool_desc_clean_cache">清除包缓存并重启，修复安装失败</string>
+    <string name="tool_desc_reset_restriction">重置限制列表并重启，恢复被禁用的应用</string>
+    <string name="tool_desc_hide_theme">防止主题图片出现在相册</string>
+    <string name="tool_desc_allow_sysapp">允许覆盖安装系统应用</string>
+</resources>

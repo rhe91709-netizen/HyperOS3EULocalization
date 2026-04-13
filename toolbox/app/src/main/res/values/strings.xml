@@ -1,0 +1,34 @@
+<resources>
+    <string name="app_name">HyperOS3 EU Localization Toolbox</string>
+    <string name="mainactivity_textview_device_state">Device Status</string>
+    <string name="mainactivity_textview_root_state">Root: </string>
+    <string name="mainactivity_textview_xposed_module_state">Xposed Module: </string>
+    <string name="mainactivity_textview_magisk_module_state">Module Version: </string>
+    <string name="mainactivity_textview_toolsbox_version">Toolbox Version: </string>
+    <string name="mainactivity_button_refresh_device_state">Refresh Status</string>
+    <string name="mainactivity_button_reset_app_permission">Reset App Permissions</string>
+    <string name="mainactivity_button_grant_system_app_permission">Fix System App Permissions</string>
+    <string name="mainactivity_button_hide_theme_folder">Hide Theme Folder</string>
+    <string name="mainactivity_button_allow_install_system_app">Allow System App Install</string>
+    <string name="mainactivity_button_package_error_log">Export Logs</string>
+    <string name="mainactivity_button_delete_error_log">Clear Logs</string>
+    <string name="mainactivity_toast_nonroot">Device not rooted or no root access granted</string>
+    <string name="mainactivity_toast_processing">Processing...</string>
+    <string name="mainactivity_toast_process_success">Done</string>
+    <string name="mainactivity_toast_process_failed">Failed</string>
+    <string name="mainactivity_text_check_app_version_failed">Error</string>
+    <string name="mainactivity_text_xposed_module_activated">Active</string>
+    <string name="mainactivity_text_xposed_module_inactivated">Inactive</string>
+    <string name="mainactivity_text_magisk_module_not_installed">Not installed</string>
+    <string name="mainactivity_toast_magisk_module_tools_not_match">Toolbox version does not match module version</string>
+    <string name="mainactivity_toast_not_magisk_module_installed">Module not installed</string>
+    <string name="mainactivity_toast_package_error_log_success">Saved to /sdcard/HyperOS3EULocalization/ErrorLog.tar\nContains device info, do not share publicly</string>
+    <string name="mainactivity_button_clean_package_cache">Clear Package Cache</string>
+    <string name="mainactivity_button_reset_package_restriction">Reset Package Restrictions</string>
+    <string name="tool_desc_reset_permission">Clear permission cache and reboot</string>
+    <string name="tool_desc_fix_permission">Grant permissions for localized apps</string>
+    <string name="tool_desc_clean_cache">Clear package cache and reboot</string>
+    <string name="tool_desc_reset_restriction">Restore disabled/hidden apps</string>
+    <string name="tool_desc_hide_theme">Hide theme images from gallery</string>
+    <string name="tool_desc_allow_sysapp">Allow system app override install</string>
+</resources>

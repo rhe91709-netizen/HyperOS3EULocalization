@@ -1,0 +1,40 @@
+# Build outputs
+*.zip
+*.idsig
+
+# Allow APKs in system/ for Git LFS
+*.apk
+!system/**/*.apk
+
+# Toolbox build outputs
+toolbox/.gradle/
+toolbox/app/build/
+toolbox/build/
+toolbox/local.properties
+toolbox/*.keystore
+
+# Development tools
+android-sdk/
+erofs-utils/
+payload-dumper-go
+payload-dumper-go_*.tar.gz
+
+# Extracted ROM files
+rom/
+extracted_new/
+
+# Python virtual environment
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# Debug logs
+*.log
+
+# OS generated
+.DS_Store
+._*
+Thumbs.db

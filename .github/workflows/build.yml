@@ -1,0 +1,102 @@
+name: Build & Release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout (with LFS)
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install build tools
+        run: |
+          sdkmanager "build-tools;36.0.0" "platforms;android-36" --sdk_root=$ANDROID_SDK_ROOT
+
+      - name: Grant Gradle execute permission
+        run: chmod +x toolbox/gradlew
+
+      - name: Build Toolbox APK
+        working-directory: toolbox
+        run: ./gradlew assembleRelease
+
+      - name: Sign APK
+        run: |
+          keytool -genkeypair \
+            -keystore debug.keystore \
+            -storepass android \
+            -alias androiddebugkey \
+            -keypass android \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -dname "CN=Android Debug,O=Android,C=US"
+          $ANDROID_SDK_ROOT/build-tools/36.0.0/apksigner sign \
+            --ks debug.keystore \
+            --ks-pass pass:android \
+            --key-pass pass:android \
+            --out HyperOS3_Toolbox_v304.apk \
+            toolbox/app/build/outputs/apk/release/app-release-unsigned.apk
+
+      - name: Get version
+        id: version
+        run: |
+          VERSION=$(grep "versionName" toolbox/app/build.gradle | sed 's/.*versionName "\(.*\)"/\1/' | tr -d ' ')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=v$(date +'%Y%m%d')-${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+
+      - name: Package module ZIP
+        run: |
+          find . -name "._*" -delete
+          zip -r HyperOS3EULocalization-${{ steps.version.outputs.version }}.zip . \
+            --exclude "./.git*" \
+            --exclude "./toolbox/*" \
+            --exclude "./.github/*" \
+            --exclude "*/.DS_Store" \
+            --exclude "*/._*"
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: "HyperOS3 EU Localization ${{ steps.version.outputs.version }}"
+          body: |
+            ## HyperOS 3 EU Localization — nezha (Xiaomi 17 Ultra)
+
+            ### 新功能 / What's New
+            - 国行相册 v5.0 (Flutter 架构，宠物相册/春节特效/证件照)
+            - 国行相册编辑器 v4.2.5
+            - MiPush CN 区推送支持
+
+            ### 刷入说明 / Flash Instructions
+            1. 通过 Magisk / KernelSU 刷入 `.zip`
+            2. 安装 `HyperOS3_Toolbox_v304.apk`，在 LSPosed 中启用并勾选相关应用
+            3. 重启设备
+
+            ### 文件说明 / Files
+            | 文件 | 说明 |
+            |------|------|
+            | `HyperOS3EULocalization-*.zip` | Magisk/KernelSU 刷机包 |
+            | `HyperOS3_Toolbox_v304.apk` | Xposed 签名绕过模块 |
+          files: |
+            HyperOS3EULocalization-${{ steps.version.outputs.version }}.zip
+            HyperOS3_Toolbox_v304.apk
+          draft: false
+          prerelease: false

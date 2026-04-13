@@ -1,0 +1,30 @@
+<resources>
+    <string-array name="xposed_scopes" >
+        <item>com.lshfgj.minamigo.HyperOS3EULocalization</item>
+        <item>com.miui.securitycore</item>
+        <item>android</item>
+        <item>com.miui.powerkeeper</item>
+        <item>com.xiaomi.powerchecker</item>
+        <item>com.miui.home</item>
+        <item>com.miui.core</item>
+        <item>com.android.systemui</item>
+        <item>com.android.mms</item>
+        <item>com.miui.voiceassist</item>
+        <item>com.miui.personalassistant</item>
+        <item>com.miui.weather2</item>
+        <item>com.android.thememanager</item>
+        <item>com.miui.notes</item>
+        <item>com.miui.aod</item>
+        <item>com.xiaomi.aiasst.vision</item>
+        <item>com.xiaomi.aiasst.service</item>
+        <item>com.miui.player</item>
+        <item>com.android.calendar</item>
+        <item>com.miui.yellowpage</item>
+        <item>com.miui.contentextension</item>
+        <item>com.android.contacts</item>
+        <item>com.android.soundrecorder</item>
+        <item>com.xiaomi.market</item>
+        <item>com.miui.gallery</item>
+        <item>com.miui.mediaeditor</item>
+    </string-array>
+</resources>
