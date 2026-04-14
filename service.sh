@@ -124,8 +124,8 @@ start_cn_services() {
     # (超级小爱 → 唤醒方式 → 电源键唤醒). We don't force-enable it.
     if [ -f $MODDIR/system/etc/localization/VoiceAssist ]; then
         (
-            for i in 1 2 3 4 5 6; do
-                sleep 15
+            for i in 1 2; do
+                sleep 20
                 current=$(settings get global key_xiaoai_ui_settings 2>/dev/null)
                 if [ "$current" = "0" ]; then
                     settings put system is_custom_shortcut_effective 1 2>/dev/null
