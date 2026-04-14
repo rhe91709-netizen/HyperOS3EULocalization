@@ -103,12 +103,6 @@ force_install_cn_apks() {
         done
     done
 
-    # Auto-enable power key for VoiceAssist if VoiceAssist was installed
-    local POWERKEY_MARKER=$MODDIR/.powerkey_voiceassist_enabled
-    if [ -f "$MODDIR/system/etc/localization/VoiceAssist" ] && [ ! -f "$POWERKEY_MARKER" ]; then
-        touch "$POWERKEY_MARKER"
-    fi
-
     touch "$MARKER"
 }
 
@@ -126,12 +120,18 @@ start_cn_services() {
     dumpsys deviceidle whitelist +com.xiaomi.market >/dev/null 2>&1
 
     # Restore power key settings (VoiceAssist wake + Power+Vol Up shutdown)
-    # Controlled by marker file: create to enable, delete to disable
-    local POWERKEY_MARKER=$MODDIR/.powerkey_voiceassist_enabled
-    if [ -f "$POWERKEY_MARKER" ]; then
-        settings put system is_custom_shortcut_effective 1
-        settings put global key_xiaoai_ui_settings 0
-        settings put system should_filter_toolbox 1
+    # Apply multiple times with delay to survive system/OEM resets post-boot
+    if [ -f $MODDIR/system/etc/localization/VoiceAssist ]; then
+        apply_powerkey_settings() {
+            settings put system is_custom_shortcut_effective 1 2>/dev/null
+            settings put global key_xiaoai_ui_settings 0 2>/dev/null
+            settings put system should_filter_toolbox 1 2>/dev/null
+        }
+        apply_powerkey_settings
+        sleep 20
+        apply_powerkey_settings
+        sleep 30
+        apply_powerkey_settings
     fi
 
     # Start VoiceAssist and AI services
