@@ -59,7 +59,16 @@ jobs:
         id: version
         run: |
           VERSION=$(grep "versionName" toolbox/app/build.gradle | sed 's/.*versionName "\(.*\)"/\1/' | tr -d ' ')
+          # Strip OS3.0 prefix → keep "305.0.WPACNXM" style for tag
+          SHORT=$(echo "$VERSION" | sed 's/^OS3\.0\.//')
+          SHA=$(echo "$GITHUB_SHA" | cut -c1-7)
+          TAG="v${SHORT}-${SHA}"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "toolbox_apk=HyperOS3_Toolbox_${TAG}.apk" >> $GITHUB_OUTPUT
+
+      - name: Rename Toolbox APK
+        run: mv HyperOS3_Toolbox_v305.apk "${{ steps.version.outputs.toolbox_apk }}"
 
       - name: Package module ZIP
         run: |
@@ -71,18 +80,12 @@ jobs:
             --exclude "*/.DS_Store" \
             --exclude "*/._*"
 
-      - name: Delete existing release and tag
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release delete latest --yes 2>/dev/null || true
-          git push origin :refs/tags/latest 2>/dev/null || true
-
       - name: Create Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create latest \
+          gh release create "${{ steps.version.outputs.tag }}" \
+            --latest \
             --title "HyperOS3 EU Localization ${{ steps.version.outputs.version }}" \
             --notes "## HyperOS 3 EU Localization — nezha (Xiaomi 17 Ultra)
 
@@ -96,15 +99,27 @@ jobs:
           ### 刷入说明 / Flash Instructions
           1. 通过 Magisk / KernelSU 刷入 \`.zip\`
           2. 按音量键提示选择需要的功能
-          3. 安装 \`HyperOS3_Toolbox_v305.apk\`，在 LSPosed 中启用并勾选相关应用
+          3. 安装 \`${{ steps.version.outputs.toolbox_apk }}\`，在 LSPosed 中启用并勾选相关应用
           4. 重启设备
 
           ### 文件说明 / Files
           | 文件 | 说明 |
           |------|------|
           | \`HyperOS3EULocalization-*.zip\` | Magisk/KernelSU 刷机包 |
-          | \`HyperOS3_Toolbox_v305.apk\` | Xposed 签名绕过模块 |
+          | \`${{ steps.version.outputs.toolbox_apk }}\` | Xposed 签名绕过模块 |
 
           > 构建于 $(date +'%Y-%m-%d %H:%M UTC') · commit \`${GITHUB_SHA::7}\`" \
             HyperOS3EULocalization-${{ steps.version.outputs.version }}.zip \
-            HyperOS3_Toolbox_v305.apk
+            "${{ steps.version.outputs.toolbox_apk }}"
+
+      - name: Prune old releases (keep latest 3)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Keep newest 3 releases, delete the rest (plus their git tags)
+          gh release list --limit 100 --json tagName,createdAt --jq 'sort_by(.createdAt) | reverse | .[3:] | .[].tagName' \
+            | while read tag; do
+                [ -z "$tag" ] && continue
+                echo "Deleting old release: $tag"
+                gh release delete "$tag" --yes --cleanup-tag || true
+              done
