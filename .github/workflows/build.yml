@@ -52,7 +52,7 @@ jobs:
             --ks debug.keystore \
             --ks-pass pass:android \
             --key-pass pass:android \
-            --out HyperOS3_Toolbox_v304.apk \
+            --out HyperOS3_Toolbox_v305.apk \
             toolbox/app/build/outputs/apk/release/app-release-unsigned.apk
 
       - name: Get version
@@ -96,15 +96,15 @@ jobs:
           ### 刷入说明 / Flash Instructions
           1. 通过 Magisk / KernelSU 刷入 \`.zip\`
           2. 按音量键提示选择需要的功能
-          3. 安装 \`HyperOS3_Toolbox_v304.apk\`，在 LSPosed 中启用并勾选相关应用
+          3. 安装 \`HyperOS3_Toolbox_v305.apk\`，在 LSPosed 中启用并勾选相关应用
           4. 重启设备
 
           ### 文件说明 / Files
           | 文件 | 说明 |
           |------|------|
           | \`HyperOS3EULocalization-*.zip\` | Magisk/KernelSU 刷机包 |
-          | \`HyperOS3_Toolbox_v304.apk\` | Xposed 签名绕过模块 |
+          | \`HyperOS3_Toolbox_v305.apk\` | Xposed 签名绕过模块 |
 
           > 构建于 $(date +'%Y-%m-%d %H:%M UTC') · commit \`${GITHUB_SHA::7}\`" \
             HyperOS3EULocalization-${{ steps.version.outputs.version }}.zip \
-            HyperOS3_Toolbox_v304.apk
+            HyperOS3_Toolbox_v305.apk

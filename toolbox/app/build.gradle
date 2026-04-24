@@ -11,8 +11,8 @@ android {
         applicationId "com.lshfgj.minamigo.HyperOS3EULocalization"
         minSdkVersion 30
         targetSdkVersion 36
-        versionCode 4
-        versionName "OS3.0.304.0.WPACNXM"
+        versionCode 5
+        versionName "OS3.0.305.0.WPACNXM"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

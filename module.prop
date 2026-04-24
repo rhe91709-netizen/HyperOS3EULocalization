@@ -1,10 +1,10 @@
-version=OS3.0.304.0.WPACNXM
-targetMiuiVersion=OS3.0.304.0.WPACNXM
+version=OS3.0.305.0.WPACNXM
+targetMiuiVersion=OS3.0.305.0.WPACNXM
 targetModel=nezha
 modify=Adapted for HyperOS 3
 
 id=HyperOS3EULocalization
 name=HyperOS3 EU 本地化
-versionCode=2
+versionCode=3
 author=LSHFGJ & MinaMiGo
 description=Reintegrate original HyperOS features for xiaomi.eu HyperOS3 ROM, forked from MiuiEULocalization@MinaMiGo.

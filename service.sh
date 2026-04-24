@@ -119,22 +119,6 @@ start_cn_services() {
     dumpsys deviceidle whitelist +com.xiaomi.aiasst.vision >/dev/null 2>&1
     dumpsys deviceidle whitelist +com.xiaomi.market >/dev/null 2>&1
 
-    # Preserve VoiceAssist power-key wake setting across reboots.
-    # Only acts if user has enabled it inside the VoiceAssist app
-    # (超级小爱 → 唤醒方式 → 电源键唤醒). We don't force-enable it.
-    if [ -f $MODDIR/system/etc/localization/VoiceAssist ]; then
-        (
-            for i in 1 2; do
-                sleep 20
-                current=$(settings get global key_xiaoai_ui_settings 2>/dev/null)
-                if [ "$current" = "0" ]; then
-                    settings put system is_custom_shortcut_effective 1 2>/dev/null
-                    settings put system should_filter_toolbox 1 2>/dev/null
-                fi
-            done
-        ) &
-    fi
-
     # Start VoiceAssist and AI services
     am start-foreground-service -n com.xiaomi.aiasst.service/.AiAsstService >/dev/null 2>&1
     am broadcast -a android.intent.action.BOOT_COMPLETED -p com.miui.voiceassist >/dev/null 2>&1

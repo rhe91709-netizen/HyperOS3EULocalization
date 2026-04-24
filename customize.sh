@@ -21,7 +21,7 @@ print_banner() {
     ui_print "║           HyperOS 3 EU Localization Module                   ║"
     ui_print "║                                                              ║"
     ui_print "╠══════════════════════════════════════════════════════════════╣"
-    ui_print "║  Version: OS3.0.304.0                                         ║"
+    ui_print "║  Version: OS3.0.305.0                                         ║"
     ui_print "║  Author:  LSHFGJ & MinaMiGo                                  ║"
     ui_print "║  Target:  Xiaomi 17 Ultra (nezha) - xiaomi.eu HyperOS3       ║"
     ui_print "╚══════════════════════════════════════════════════════════════╝"
