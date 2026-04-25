@@ -44,22 +44,26 @@ print_info() {
 chooseport() {
     local timeout=10
     local start_time=$(date +%s)
-    
+    : > $TMPDIR/events
+
     while true; do
-        local current_time=$(date +%s)
-        local elapsed=$((current_time - start_time))
-        
+        local elapsed=$(( $(date +%s) - start_time ))
         if [ $elapsed -ge $timeout ]; then
-            return 0 # Default to YES/UP
+            return 0 # Default to YES/UP on timeout
         fi
 
-        /system/bin/getevent -lc 1 2>&1 | /system/bin/grep VOLUME | /system/bin/grep " DOWN" > $TMPDIR/events
-        if (`cat $TMPDIR/events 2>/dev/null | /system/bin/grep VOLUME >/dev/null`); then
+        # Wrap getevent with /system/bin/timeout so a single call
+        # cannot block longer than 1s. Without this the outer 10s
+        # timeout never fires when no key is pressed (getevent -lc 1
+        # blocks indefinitely waiting for input).
+        /system/bin/timeout 1 /system/bin/getevent -lc 1 2>/dev/null \
+            | /system/bin/grep VOLUME | /system/bin/grep " DOWN" > $TMPDIR/events
+        if /system/bin/grep -q VOLUME $TMPDIR/events 2>/dev/null; then
             break
         fi
     done
 
-    if (`cat $TMPDIR/events 2>/dev/null | /system/bin/grep VOLUMEUP >/dev/null`); then
+    if /system/bin/grep -q VOLUMEUP $TMPDIR/events 2>/dev/null; then
         return 0
     else
         return 1

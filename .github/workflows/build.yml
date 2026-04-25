@@ -78,7 +78,9 @@ jobs:
             --exclude "./toolbox/*" \
             --exclude "./.github/*" \
             --exclude "*/.DS_Store" \
-            --exclude "*/._*"
+            --exclude "*/._*" \
+            --exclude "./debug.keystore" \
+            --exclude "./HyperOS3_Toolbox_*"
 
       - name: Create Release
         env:
