@@ -1,8 +1,8 @@
 name: Build & Release
 
 on:
-  push:
-    branches: [main]
+  # Push trigger disabled: free-tier LFS budget is too small for this repo's APKs.
+  # Use ./release.sh locally instead. Re-enable push when on paid LFS quota.
   workflow_dispatch:
 
 permissions:
