@@ -33,7 +33,8 @@ notification_feature_process() {
 # Force install CN APKs to override EU versions with different signatures
 force_install_cn_apks() {
     local TMPDIR=/data/local/tmp/eu_loc_install
-    local MARKER=$MODDIR/system/etc/localization/.apks_installed_$SYSTEM_VERSION
+    local MARKER=$MODDIR/system/etc/localization/.apks_installed_${SYSTEM_VERSION}_guardwarning_v2
+    local LOGFILE=/data/local/tmp/eu_loc_install.log
 
     # Only run if not already done for this system version
     if [ -f "$MARKER" ]; then
@@ -47,6 +48,7 @@ force_install_cn_apks() {
     sleep 10
 
     mkdir -p $TMPDIR
+    echo "==== HyperOS3 EU Localization install $(date) ====" > "$LOGFILE"
 
     # Install conflict-causing apps first (Notes, AOD) to resolve permission conflicts
     for apk in \
@@ -54,7 +56,7 @@ force_install_cn_apks() {
         "$MODDIR/system/product/priv-app/MiuiAod/MiuiAod.apk"; do
         if [ -f "$apk" ]; then
             cp "$apk" "$TMPDIR/$(basename $apk)"
-            pm install -r -d -g "$TMPDIR/$(basename $apk)" >/dev/null 2>&1
+            pm install -r -d -g "$TMPDIR/$(basename $apk)" >>"$LOGFILE" 2>&1
             rm -f "$TMPDIR/$(basename $apk)"
         fi
     done
@@ -83,12 +85,21 @@ force_install_cn_apks() {
         "$MODDIR/system/product/priv-app/Contacts/Contacts.apk" \
         "$MODDIR/system/product/priv-app/SoundRecorder/SoundRecorder.apk" \
         "$MODDIR/system/product/priv-app/MiuiGallery/MIUIGallery.apk" \
-        "$MODDIR/system/product/app/MiMediaEditor/MiMediaEditor.apk"; do
+        "$MODDIR/system/product/app/MiMediaEditor/MiMediaEditor.apk" \
+        "$MODDIR/system/product/app/GuardProvider/GuardProvider.apk" \
+        "$MODDIR/system/product/app/MIUIgreenguard/MIUIgreenguard.apk"; do
         if [ -f "$apk" ]; then
             cp "$apk" "$TMPDIR/$(basename $apk)"
-            pm install -r -d -g "$TMPDIR/$(basename $apk)" >/dev/null 2>&1
+            echo "install: $apk" >> "$LOGFILE"
+            pm install -r -d -g "$TMPDIR/$(basename $apk)" >>"$LOGFILE" 2>&1
             rm -f "$TMPDIR/$(basename $apk)"
         fi
+    done
+
+    for pkg in com.miui.guardprovider com.miui.greenguard; do
+        cmd package install-existing --user 0 "$pkg" >>"$LOGFILE" 2>&1
+        pm enable --user 0 "$pkg" >>"$LOGFILE" 2>&1
+        cmd package unsuspend --user 0 "$pkg" >>"$LOGFILE" 2>&1
     done
 
     rm -rf $TMPDIR
@@ -96,7 +107,9 @@ force_install_cn_apks() {
     # Grant key runtime permissions for replaced apps
     for perm_entry in \
         "com.android.contacts android.permission.READ_CONTACTS android.permission.WRITE_CONTACTS android.permission.READ_CALL_LOG android.permission.WRITE_CALL_LOG android.permission.CALL_PHONE android.permission.READ_PHONE_STATE android.permission.POST_NOTIFICATIONS" \
-        "com.android.soundrecorder android.permission.RECORD_AUDIO android.permission.READ_EXTERNAL_STORAGE android.permission.WRITE_EXTERNAL_STORAGE android.permission.POST_NOTIFICATIONS"; do
+        "com.android.soundrecorder android.permission.RECORD_AUDIO android.permission.READ_EXTERNAL_STORAGE android.permission.WRITE_EXTERNAL_STORAGE android.permission.POST_NOTIFICATIONS" \
+        "com.miui.guardprovider android.permission.RECORD_AUDIO android.permission.READ_PHONE_STATE android.permission.POST_NOTIFICATIONS" \
+        "com.miui.greenguard android.permission.ACCESS_COARSE_LOCATION android.permission.ACCESS_FINE_LOCATION android.permission.READ_PHONE_STATE android.permission.POST_NOTIFICATIONS android.permission.ACTIVITY_RECOGNITION"; do
         pkg=$(echo $perm_entry | awk '{print $1}')
         for perm in $(echo $perm_entry | awk '{$1=""; print $0}'); do
             pm grant $pkg $perm >/dev/null 2>&1
@@ -104,6 +117,7 @@ force_install_cn_apks() {
     done
 
     touch "$MARKER"
+    echo "done" >> "$LOGFILE"
 }
 
 # Ensure key apps auto-start after boot
@@ -123,6 +137,25 @@ start_cn_services() {
     am start-foreground-service -n com.xiaomi.aiasst.service/.AiAsstService >/dev/null 2>&1
     am broadcast -a android.intent.action.BOOT_COMPLETED -p com.miui.voiceassist >/dev/null 2>&1
     am broadcast -a android.intent.action.BOOT_COMPLETED -p com.xiaomi.aiasst.service >/dev/null 2>&1
+}
+
+restore_voiceassist_powerwake() {
+    local marker="$MODDIR/voiceassist_powerwake.enabled"
+
+    [ -f "$marker" ] || return
+
+    while [ "$(getprop sys.boot_completed)" != "1" ]; do
+        sleep 2
+    done
+
+    for i in 1 2; do
+        sleep 20
+        settings put global key_xiaoai_ui_settings 0 >/dev/null 2>&1
+        settings put system is_custom_shortcut_effective 1 >/dev/null 2>&1
+        settings put system should_filter_toolbox 1 >/dev/null 2>&1
+        settings put system long_press_power_key launch_voice_assistant >/dev/null 2>&1
+        settings put system long_press_power_launch_xiaoai 1 >/dev/null 2>&1
+    done
 }
 
 set_mipush_region() {
@@ -153,6 +186,7 @@ set_mipush_region() {
 cache_clean
 force_install_cn_apks &
 start_cn_services &
+restore_voiceassist_powerwake &
 notification_feature_process
 
 if $MiPush ; then

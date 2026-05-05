@@ -153,7 +153,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:columnCount="2"
-        android:rowCount="3"
+        android:rowCount="4"
         android:layout_marginBottom="12dp">
 
         <!-- Row 1, Col 1: Reset Permission -->
@@ -378,6 +378,80 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Row 4, Col 1: Fix unknown-source sensitive permissions -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:layout_margin="4dp"
+            app:cardBackgroundColor="#1A1A1A"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="0dp"
+            app:strokeColor="#2A2A2A"
+            app:strokeWidth="1dp"
+            android:onClick="fixUnknownSourcePermissionsHandler">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="14dp"
+                android:gravity="center_vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/mainactivity_button_fix_unknown_source_permission"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="6dp" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tool_desc_fix_unknown_source_permission"
+                    android:textColor="#666666"
+                    android:textSize="11sp"
+                    android:lineSpacingExtra="2dp" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Row 4, Col 2: VoiceAssist power wake fix -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:layout_margin="4dp"
+            app:cardBackgroundColor="#1A1A1A"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="0dp"
+            app:strokeColor="#2A2A2A"
+            app:strokeWidth="1dp"
+            android:onClick="enableVoiceAssistPowerWakeFixHandler">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="14dp"
+                android:gravity="center_vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/mainactivity_button_save_voiceassist_powerwake"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="6dp" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tool_desc_save_voiceassist_powerwake"
+                    android:textColor="#666666"
+                    android:textSize="11sp"
+                    android:lineSpacingExtra="2dp" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
     </GridLayout>
 
     <!-- Bottom Log Buttons -->
@@ -427,5 +501,7 @@
     <Button android:id="@+id/button_reset_package_restriction" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
     <Button android:id="@+id/button_hide_theme_folder" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
     <Button android:id="@+id/button_allow_system_app_update" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
+    <Button android:id="@+id/button_fix_unknown_source_permission" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
+    <Button android:id="@+id/button_enable_voiceassist_powerwake_fix" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
 
 </LinearLayout>

@@ -6,9 +6,16 @@ import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainModule implements IXposedHookLoadPackage {
     List<String> XSPACE_INTRODUCE_APPS = new ArrayList();
@@ -36,6 +43,13 @@ public class MainModule implements IXposedHookLoadPackage {
             case "com.miui.securitycore":
                 try {
                     handleSecuritycore(lpparam);
+                } catch (Exception e) {
+                    XposedBridge.log("Hooked " + pkg + " Error: " + e.toString());
+                }
+                break;
+            case "com.miui.securitycenter":
+                try {
+                    handleSecurityCenter(lpparam);
                 } catch (Exception e) {
                     XposedBridge.log("Hooked " + pkg + " Error: " + e.toString());
                 }
@@ -99,6 +113,8 @@ public class MainModule implements IXposedHookLoadPackage {
                     case "com.xiaomi.market":
                     case "com.miui.gallery":
                     case "com.miui.mediaeditor":
+                    case "com.miui.guardprovider":
+                    case "com.miui.greenguard":
                         bypassSignatureChecks(lpparam);
                         break;
                 }
@@ -173,7 +189,10 @@ public class MainModule implements IXposedHookLoadPackage {
                                 apkPath.contains("SuperMarket") ||
                                 apkPath.contains("MIUIGallery") ||
                                 apkPath.contains("MiuiGallery") ||
-                                apkPath.contains("MiMediaEditor"))) {
+                                apkPath.contains("MiMediaEditor") ||
+                                apkPath.contains("GuardProvider") ||
+                                apkPath.contains("MIUIGuardProvider") ||
+                                apkPath.contains("MIUIgreenguard"))) {
                             if (param.getThrowable() != null) {
                                 XposedBridge.log("HyperOS3 Localization: Suppressing signature error for " + apkPath
                                         + " in " + lpparam.processName);
@@ -224,7 +243,10 @@ public class MainModule implements IXposedHookLoadPackage {
                                     fileName.contains("SuperMarket") ||
                                     fileName.contains("MIUIGallery") ||
                                     fileName.contains("MiuiGallery") ||
-                                    fileName.contains("MiMediaEditor")) {
+                                    fileName.contains("MiMediaEditor") ||
+                                    fileName.contains("GuardProvider") ||
+                                    fileName.contains("MIUIGuardProvider") ||
+                                    fileName.contains("MIUIgreenguard")) {
                                 param.args[1] = false; // verify = false
                                 if (param.args.length >= 3) {
                                     param.args[2] = false; // signatureSchemeRollbackProtections enforcement = false
@@ -342,6 +364,155 @@ public class MainModule implements IXposedHookLoadPackage {
         XposedHelpers.setStaticObjectField(
                 XposedHelpers.findClass("com.miui.xspace.constant.XSpaceApps", lpparam.classLoader),
                 "XSPACE_INTRODUCE_APPS", this.XSPACE_INTRODUCE_APPS);
+    }
+
+    private void handleSecurityCenter(final XC_LoadPackage.LoadPackageParam lpparam) {
+        hookSecurityCenterWarningRequests(lpparam);
+    }
+
+    private void hookSecurityCenterWarningRequests(final XC_LoadPackage.LoadPackageParam lpparam) {
+        final Class<?> netUtilClass = XposedHelpers.findClassIfExists("y8.l", lpparam.classLoader);
+        if (netUtilClass == null) {
+            XposedBridge.log("HyperOS3 Localization: SecurityCenter NetUtil class not found");
+            return;
+        }
+
+        XposedBridge.hookAllMethods(netUtilClass, "s", new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) {
+                try {
+                    Object currentResult = param.getResult();
+                    if (currentResult instanceof String && !((String) currentResult).isEmpty()) {
+                        return;
+                    }
+                    if (param.args == null || param.args.length < 3 ||
+                            !(param.args[0] instanceof Map) ||
+                            !(param.args[1] instanceof String) ||
+                            !(param.args[2] instanceof String)) {
+                        return;
+                    }
+
+                    String requestUrl = (String) param.args[1];
+                    if (!shouldRestoreSecurityCenterRequest(requestUrl)) {
+                        return;
+                    }
+
+                    String restoredResult = performSecurityCenterSignedPost(
+                            lpparam.classLoader,
+                            netUtilClass,
+                            (Map<?, ?>) param.args[0],
+                            requestUrl,
+                            (String) param.args[2]);
+                    if (restoredResult != null && !restoredResult.isEmpty()) {
+                        param.setResult(restoredResult);
+                        XposedBridge.log("HyperOS3 Localization: restored SecurityCenter request " + requestUrl);
+                    }
+                } catch (Throwable t) {
+                    XposedBridge.log("HyperOS3 Localization: restore SecurityCenter request failed: " + t);
+                }
+            }
+        });
+    }
+
+    private boolean shouldRestoreSecurityCenterRequest(String requestUrl) {
+        if (requestUrl == null) {
+            return false;
+        }
+        return requestUrl.contains("api.sec.miui.com") || requestUrl.contains("srv.sec.miui.com");
+    }
+
+    private String performSecurityCenterSignedPost(ClassLoader classLoader, Class<?> netUtilClass,
+                                                   Map<?, ?> params, String requestUrl, String salt) throws Throwable {
+        Map<String, String> requestParams = new HashMap<>();
+        if (params != null) {
+            for (Map.Entry<?, ?> entry : params.entrySet()) {
+                Object key = entry.getKey();
+                Object value = entry.getValue();
+                if (key != null && value != null) {
+                    requestParams.put(String.valueOf(key), String.valueOf(value));
+                }
+            }
+        }
+
+        Method signMethod = netUtilClass.getDeclaredMethod("b", Map.class, String.class);
+        signMethod.setAccessible(true);
+        Method encodeMethod = netUtilClass.getDeclaredMethod("h", Map.class);
+        encodeMethod.setAccessible(true);
+
+        Object signedParams;
+        Boolean oldInternational = null;
+        Boolean oldGlobal = null;
+        Class<?> buildClass = XposedHelpers.findClassIfExists("miui.os.Build", classLoader);
+        try {
+            if (buildClass != null) {
+                oldInternational = XposedHelpers.getStaticBooleanField(buildClass, "IS_INTERNATIONAL_BUILD");
+                oldGlobal = XposedHelpers.getStaticBooleanField(buildClass, "IS_GLOBAL_BUILD");
+                XposedHelpers.setStaticBooleanField(buildClass, "IS_INTERNATIONAL_BUILD", false);
+                XposedHelpers.setStaticBooleanField(buildClass, "IS_GLOBAL_BUILD", false);
+            }
+            signedParams = signMethod.invoke(null, requestParams, salt);
+        } finally {
+            if (buildClass != null) {
+                if (oldInternational != null) {
+                    XposedHelpers.setStaticBooleanField(buildClass, "IS_INTERNATIONAL_BUILD", oldInternational);
+                }
+                if (oldGlobal != null) {
+                    XposedHelpers.setStaticBooleanField(buildClass, "IS_GLOBAL_BUILD", oldGlobal);
+                }
+            }
+        }
+
+        String body = (String) encodeMethod.invoke(null, signedParams);
+        return postSecurityCenterForm(requestUrl, body);
+    }
+
+    private String postSecurityCenterForm(String requestUrl, String body) throws Exception {
+        HttpURLConnection connection = null;
+        DataOutputStream outputStream = null;
+        InputStream inputStream = null;
+        ByteArrayOutputStream buffer = null;
+        try {
+            connection = (HttpURLConnection) new URL(requestUrl).openConnection();
+            connection.setConnectTimeout(15000);
+            connection.setReadTimeout(15000);
+            connection.setUseCaches(false);
+            connection.setDoInput(true);
+            connection.setRequestMethod("POST");
+            connection.setDoOutput(true);
+            connection.addRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+
+            outputStream = new DataOutputStream(connection.getOutputStream());
+            outputStream.write(body == null ? new byte[0] : body.getBytes("UTF-8"));
+            outputStream.close();
+            outputStream = null;
+
+            int responseCode = connection.getResponseCode();
+            if (responseCode != HttpURLConnection.HTTP_OK) {
+                return "";
+            }
+
+            inputStream = connection.getInputStream();
+            buffer = new ByteArrayOutputStream();
+            byte[] bytes = new byte[4096];
+            int read;
+            while ((read = inputStream.read(bytes)) != -1) {
+                buffer.write(bytes, 0, read);
+            }
+            return buffer.toString("UTF-8");
+        } finally {
+            if (outputStream != null) {
+                outputStream.close();
+            }
+            if (inputStream != null) {
+                inputStream.close();
+            }
+            if (buffer != null) {
+                buffer.close();
+            }
+            if (connection != null) {
+                connection.disconnect();
+            }
+        }
     }
 
     private void handleSelf(XC_LoadPackage.LoadPackageParam lpparam) {

@@ -414,6 +414,26 @@ else
     ui_print "   [?] 小米推送 MiPush (not found, skip)"
     MiPush=false
 fi
+ui_print ""
+
+if [[ $GuardProvider == true ]] ;then
+    ui_print "   [+] 电诈防护 / AI通话预警 GuardProvider"
+elif [[ $GuardProvider == false ]] ;then
+    ui_print "   [-] 电诈防护 / AI通话预警 GuardProvider"
+else
+    ui_print "   [?] 电诈防护 / AI通话预警 GuardProvider (not found, skip)"
+    GuardProvider=false
+fi
+ui_print ""
+
+if [[ $GreenGuard == true ]] ;then
+    ui_print "   [+] 安全守护 / 家人守护 GreenGuard"
+elif [[ $GreenGuard == false ]] ;then
+    ui_print "   [-] 安全守护 / 家人守护 GreenGuard"
+else
+    ui_print "   [?] 安全守护 / 家人守护 GreenGuard (not found, skip)"
+    GreenGuard=false
+fi
 
 waiting 5
 
@@ -527,8 +547,16 @@ if $MiPush ;then
     touch $MODPATH/system/etc/localization/MiPush
 fi
 
+if $GuardProvider ;then
+    touch $MODPATH/system/etc/localization/GuardProvider
+fi
+
+if $GreenGuard ;then
+    touch $MODPATH/system/etc/localization/GreenGuard
+fi
+
 # Dependence Processing
-if $Calendar || $VirtualSim || $Mms || $ContentExtension || $Weather || $PersonalAssistant || $ThemeManager || $AiAsst || $NotificationFilter || $Music || $SoundRecorder || $VoiceAssist || $MiuiIme || $AiAsst || $YellowPage ;then
+if $Calendar || $VirtualSim || $Mms || $ContentExtension || $Weather || $PersonalAssistant || $ThemeManager || $AiAsst || $NotificationFilter || $Music || $SoundRecorder || $VoiceAssist || $MiuiIme || $AiAsst || $YellowPage || $GuardProvider || $GreenGuard ;then
     RemoveMod=true
 fi
 
@@ -651,6 +679,14 @@ fi
 
 if ! $MediaEditor ;then
     rm -rf $MODPATH/system/product/app/MiMediaEditor
+fi
+
+if ! $GuardProvider ;then
+    rm -rf $MODPATH/system/product/app/GuardProvider
+fi
+
+if ! $GreenGuard ;then
+    rm -rf $MODPATH/system/product/app/MIUIgreenguard
 fi
 
 if ! $RemoveMod ;then

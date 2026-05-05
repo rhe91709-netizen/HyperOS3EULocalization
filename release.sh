@@ -80,6 +80,9 @@ NOTES="## HyperOS 3 EU Localization — nezha (Xiaomi 17 Ultra)
 ### 功能 / Features
 - 国行相册 v5.0（Flutter 架构）
 - 国行相册编辑器 v4.2.5
+- 电诈防护 / 通话防护 / AI 通话预警
+- 安全守护 / 家人守护
+- 地震预警、自然灾害预警订阅地区修复
 - MiPush CN 区推送支持
 - 小爱同学、负一屏、短信、传送门、黄页、通讯录
 - 小米钱包 / MiPay / 日历 / 天气 / 音乐 / 录音机

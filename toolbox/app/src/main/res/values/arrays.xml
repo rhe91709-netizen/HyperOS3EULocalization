@@ -2,6 +2,7 @@
     <string-array name="xposed_scopes" >
         <item>com.lshfgj.minamigo.HyperOS3EULocalization</item>
         <item>com.miui.securitycore</item>
+        <item>com.miui.securitycenter</item>
         <item>android</item>
         <item>com.miui.powerkeeper</item>
         <item>com.xiaomi.powerchecker</item>
@@ -26,5 +27,7 @@
         <item>com.xiaomi.market</item>
         <item>com.miui.gallery</item>
         <item>com.miui.mediaeditor</item>
+        <item>com.miui.guardprovider</item>
+        <item>com.miui.greenguard</item>
     </string-array>
 </resources>

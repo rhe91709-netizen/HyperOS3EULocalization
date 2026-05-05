@@ -87,7 +87,7 @@ set_config() {
 }
 
 enable_all() {
-    local keys="Mipay VoiceAssist PersonalAssistant Weather Calendar Music SoundRecorder ThemeManager Mms ContentExtension YellowPage AiAsst VoiceTrigger RemoveMod Fonts HybridPlatform VirtualSim MiuiIme SogouInput GboardTheme VideocallBeautify NotificationFilter Contacts AppStore Gallery MediaEditor MiPush"
+    local keys="Mipay VoiceAssist PersonalAssistant Weather Calendar Music SoundRecorder ThemeManager Mms ContentExtension YellowPage AiAsst VoiceTrigger RemoveMod Fonts HybridPlatform VirtualSim MiuiIme SogouInput GboardTheme VideocallBeautify NotificationFilter Contacts AppStore Gallery MediaEditor MiPush GuardProvider GreenGuard"
     for key in $keys; do
         set_config $key "true"
     done
@@ -122,6 +122,8 @@ RemoveMod=false
 Gallery=false
 MediaEditor=false
 MiPush=false
+GuardProvider=false
+GreenGuard=false
 EOF
 }
 
@@ -257,6 +259,20 @@ else
     else
         print_info "已跳过"
     fi
+    ui_print ""
+
+    ui_print "  ┌─────────────────────────────────────────────────────────────┐"
+    ui_print "  │  Q8: 电诈防护 & 安全守护                                    │"
+    ui_print "  │      AI通话预警 / 通话防护 / 家人守护 / 安全守护              │"
+    ui_print "  │      注意：需同时启用 Xposed Toolbox 模块才能补齐签名权限     │"
+    ui_print "  └─────────────────────────────────────────────────────────────┘"
+    if vk_choose; then
+        print_success "已选中：电诈防护 & 安全守护"
+        set_config "GuardProvider" "true"
+        set_config "GreenGuard" "true"
+    else
+        print_info "已跳过"
+    fi
 fi
 
 ui_print ""
@@ -289,8 +305,8 @@ ui_print "║              ✓ INSTALLATION COMPLETED                        ║
 ui_print "║                                                              ║"
 ui_print "║  Please reboot your device to apply changes.                 ║"
 ui_print "║                                                              ║"
-ui_print "║  Don't forget to install the Toolbox APK and enable         ║"
-ui_print "║  the Xposed module in LSPosed/LSPatch for full features.     ║"
+ui_print "║  Install the Toolbox APK separately and enable the           ║"
+ui_print "║  Xposed module in LSPosed for full features.                 ║"
 ui_print "║                                                              ║"
 ui_print "╚══════════════════════════════════════════════════════════════╝"
 ui_print ""

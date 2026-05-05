@@ -26,10 +26,17 @@
     <string name="mainactivity_toast_package_error_log_success">已保存至 /sdcard/HyperOS3EULocalization/ErrorLog.tar\n日志包含设备信息，请勿公开</string>
     <string name="mainactivity_button_clean_package_cache">清除包缓存</string>
     <string name="mainactivity_button_reset_package_restriction">重置包限制</string>
+    <string name="mainactivity_button_fix_unknown_source_permission">修复未知来源权限</string>
+    <string name="mainactivity_button_save_voiceassist_powerwake">保持小爱按键唤醒</string>
+    <string name="mainactivity_toast_restricted_permission_fixed">已修复 %1$d 个受限应用</string>
+    <string name="mainactivity_toast_voiceassist_powerwake_enabled">已启用开机补救，重启后会恢复电源键唤醒</string>
+    <string name="mainactivity_toast_voiceassist_powerwake_disabled">已取消开机补救</string>
     <string name="tool_desc_reset_permission">清除权限缓存并重启，修复权限异常</string>
     <string name="tool_desc_fix_permission">为本地化应用补全系统权限</string>
     <string name="tool_desc_clean_cache">清除包缓存并重启，修复安装失败</string>
     <string name="tool_desc_reset_restriction">重置限制列表并重启，恢复被禁用的应用</string>
     <string name="tool_desc_hide_theme">防止主题图片出现在相册</string>
     <string name="tool_desc_allow_sysapp">允许覆盖安装系统应用</string>
+    <string name="tool_desc_fix_unknown_source_permission">修复来源非系统应用商店安装导致的敏感权限限制</string>
+    <string name="tool_desc_save_voiceassist_powerwake">用于超级小爱重启后电源键唤醒失效</string>
 </resources>
