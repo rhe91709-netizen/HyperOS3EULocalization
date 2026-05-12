@@ -83,6 +83,8 @@ NOTES="## HyperOS 3 EU Localization — nezha (Xiaomi 17 Ultra)
 - 电诈防护 / 通话防护 / AI 通话预警
 - 安全守护 / 家人守护
 - 地震预警、自然灾害预警订阅地区修复
+- Google 快速分享控制中心磁贴
+- 智能卡双击电源键唤起刷卡页补救
 - MiPush CN 区推送支持
 - 小爱同学、负一屏、短信、传送门、黄页、通讯录
 - 小米钱包 / MiPay / 日历 / 天气 / 音乐 / 录音机
