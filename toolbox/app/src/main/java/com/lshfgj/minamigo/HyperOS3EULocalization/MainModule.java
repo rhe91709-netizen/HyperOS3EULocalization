@@ -108,6 +108,9 @@ public class MainModule implements IXposedHookLoadPackage {
                     case "com.miui.nextpay":
                     case "com.miui.tsmclient":
                     case "com.miui.mipay":
+                    case "com.mipay.wallet":
+                    case "com.xiaomi.payment":
+                    case "com.unionpay.tsmservice.mi":
                     case "com.android.contacts":
                     case "com.android.soundrecorder":
                     case "com.xiaomi.market":
@@ -182,6 +185,8 @@ public class MainModule implements IXposedHookLoadPackage {
                                 apkPath.contains("MINextpay") ||
                                 apkPath.contains("MITSMClient") ||
                                 apkPath.contains("MipayService") ||
+                                apkPath.contains("PaymentService") ||
+                                apkPath.contains("UPTsmService") ||
                                 apkPath.contains("ContentCatcher") ||
                                 apkPath.contains("MiuiAudioMonitor") ||
                                 apkPath.contains("Contacts") ||
@@ -236,6 +241,8 @@ public class MainModule implements IXposedHookLoadPackage {
                                     fileName.contains("MINextpay") ||
                                     fileName.contains("MITSMClient") ||
                                     fileName.contains("MipayService") ||
+                                    fileName.contains("PaymentService") ||
+                                    fileName.contains("UPTsmService") ||
                                     fileName.contains("ContentCatcher") ||
                                     fileName.contains("MiuiAudioMonitor") ||
                                     fileName.contains("Contacts") ||

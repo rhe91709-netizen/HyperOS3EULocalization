@@ -1,7 +1,10 @@
 package com.lshfgj.minamigo.HyperOS3EULocalization;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AlertDialog;
 
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,6 +14,8 @@ import android.widget.Toast;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -42,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
 
         getDeviceStatus();
         preserveVoiceAssistPowerWakeIfEnabled();
+        preserveSmartCardPowerWakeIfEnabled();
+        preserveQuickShareTileIfEnabled();
     }
 
     @Override
@@ -210,20 +217,20 @@ public class MainActivity extends AppCompatActivity {
                             "  cmd package path \"$pkg\" >/dev/null 2>&1 || continue\n" +
                             "  if cmd appops set \"$pkg\" ACCESS_RESTRICTED_SETTINGS allow 2>/dev/null || appops set \"$pkg\" ACCESS_RESTRICTED_SETTINGS allow 2>/dev/null; then\n" +
                             "    count=$((count + 1))\n" +
+                            "    echo FIXED_PKG=$pkg\n" +
                             "  fi\n" +
                             "done < \"$tmp\"\n" +
                             "rm -f \"$tmp\"\n" +
                             "echo FIXED_COUNT=$count\n");
             final int fixedCount = parseFixedCount(output);
+            final List<String> fixedPackages = parseFixedPackages(output);
 
             runOnUiThread(() -> {
                 if (output == null || fixedCount < 0) {
                     Toast.makeText(this, processFailedToastString, Toast.LENGTH_SHORT).show();
                     return;
                 }
-                Toast.makeText(this,
-                        this.getString(R.string.mainactivity_toast_restricted_permission_fixed, fixedCount),
-                        Toast.LENGTH_LONG).show();
+                showRestrictedPermissionResultDialog(fixedCount, fixedPackages);
             });
         }).start();
     }
@@ -279,6 +286,104 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 
+    public void enableSmartCardPowerWakeFixHandler(View view) {
+        if (!this.isRooted) {
+            Toast.makeText(this, nonrootToastString, Toast.LENGTH_SHORT).show();
+            return;
+        } else if (!isMagiskModuleInstalled) {
+            Toast.makeText(this, this.getString(R.string.mainactivity_toast_not_magisk_module_installed),
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Toast.makeText(this, processingToastString, Toast.LENGTH_SHORT).show();
+
+        new Thread(() -> {
+            String output = rootCommandForOutput(
+                    "module_dir=/data/adb/modules/HyperOS3EULocalization\n" +
+                            "marker=\"$module_dir/smartcard_powerwake.enabled\"\n" +
+                            "[ -d \"$module_dir\" ] || exit 1\n" +
+                            "if [ -f \"$marker\" ]; then\n" +
+                            "  rm -f \"$marker\"\n" +
+                            "  echo SMARTCARD_POWERWAKE_STATE=disabled\n" +
+                            "  exit 0\n" +
+                            "fi\n" +
+                            "settings put system double_click_power_key mi_pay\n" +
+                            "touch \"$marker\"\n" +
+                            "echo SMARTCARD_POWERWAKE_STATE=enabled\n");
+
+            runOnUiThread(() -> {
+                if (output == null) {
+                    Toast.makeText(this, processFailedToastString, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (output.contains("SMARTCARD_POWERWAKE_STATE=disabled")) {
+                    Toast.makeText(this,
+                            this.getString(R.string.mainactivity_toast_smartcard_powerwake_disabled),
+                            Toast.LENGTH_LONG).show();
+                    return;
+                }
+                if (!output.contains("SMARTCARD_POWERWAKE_STATE=enabled")) {
+                    Toast.makeText(this, processFailedToastString, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Toast.makeText(this,
+                        this.getString(R.string.mainactivity_toast_smartcard_powerwake_enabled),
+                        Toast.LENGTH_LONG).show();
+            });
+        }).start();
+    }
+
+    public void enableQuickShareTileHandler(View view) {
+        if (!this.isRooted) {
+            Toast.makeText(this, nonrootToastString, Toast.LENGTH_SHORT).show();
+            return;
+        } else if (!isMagiskModuleInstalled) {
+            Toast.makeText(this, this.getString(R.string.mainactivity_toast_not_magisk_module_installed),
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Toast.makeText(this, processingToastString, Toast.LENGTH_SHORT).show();
+
+        new Thread(() -> {
+            String output = rootCommandForOutput(
+                            "module_dir=/data/adb/modules/HyperOS3EULocalization\n" +
+                            "marker=\"$module_dir/google_quickshare_tile.enabled\"\n" +
+                            "component=\"com.lshfgj.minamigo.HyperOS3EULocalization/.QuickShareTileService\"\n" +
+                            "tile=\"custom($component)\"\n" +
+                            "[ -d \"$module_dir\" ] || exit 1\n" +
+                            "if [ -f \"$marker\" ]; then\n" +
+                            "  rm -f \"$marker\"\n" +
+                            "  echo QUICKSHARE_TILE_STATE=disabled\n" +
+                            "  exit 0\n" +
+                            "fi\n" +
+                            "pm enable --user 0 \"$component\" >/dev/null 2>&1 || true\n" +
+                            "cmd statusbar add-tile \"$component\" >/dev/null 2>&1 || true\n" +
+                            getQuickShareTileOrderScript() +
+                            "touch \"$marker\"\n" +
+                            "echo QUICKSHARE_TILE_STATE=enabled\n");
+
+            runOnUiThread(() -> {
+                if (output == null) {
+                    Toast.makeText(this, processFailedToastString, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (output.contains("QUICKSHARE_TILE_STATE=disabled")) {
+                    Toast.makeText(this,
+                            this.getString(R.string.mainactivity_toast_quickshare_tile_disabled),
+                            Toast.LENGTH_LONG).show();
+                    return;
+                }
+                if (!output.contains("QUICKSHARE_TILE_STATE=enabled")) {
+                    Toast.makeText(this, processFailedToastString, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Toast.makeText(this,
+                        this.getString(R.string.mainactivity_toast_quickshare_tile_enabled),
+                        Toast.LENGTH_LONG).show();
+            });
+        }).start();
+    }
+
     private void preserveVoiceAssistPowerWakeIfEnabled() {
         if (!this.isRooted) {
             return;
@@ -299,6 +404,67 @@ public class MainActivity extends AppCompatActivity {
                         "  settings put system long_press_power_launch_xiaoai 1\n" +
                         "  touch \"$marker\"\n" +
                         "fi\n")).start();
+    }
+
+    private void preserveSmartCardPowerWakeIfEnabled() {
+        if (!this.isRooted) {
+            return;
+        }
+
+        new Thread(() -> rootCommandForOutput(
+                "module_dir=/data/adb/modules/HyperOS3EULocalization\n" +
+                        "marker=\"$module_dir/smartcard_powerwake.enabled\"\n" +
+                        "[ -d \"$module_dir\" ] || exit 0\n" +
+                        "double_key=$(settings get system double_click_power_key 2>/dev/null)\n" +
+                        "if [ -f \"$marker\" ] || [ \"$double_key\" = \"mi_pay\" ]; then\n" +
+                        "  settings put system double_click_power_key mi_pay\n" +
+                        "  touch \"$marker\"\n" +
+                        "fi\n")).start();
+    }
+
+    private void preserveQuickShareTileIfEnabled() {
+        if (!this.isRooted) {
+            return;
+        }
+
+        new Thread(() -> rootCommandForOutput(
+                        "module_dir=/data/adb/modules/HyperOS3EULocalization\n" +
+                        "marker=\"$module_dir/google_quickshare_tile.enabled\"\n" +
+                        "component=\"com.lshfgj.minamigo.HyperOS3EULocalization/.QuickShareTileService\"\n" +
+                        "tile=\"custom($component)\"\n" +
+                        "[ -f \"$marker\" ] || exit 0\n" +
+                        "pm enable --user 0 \"$component\" >/dev/null 2>&1 || true\n" +
+                        "cmd statusbar add-tile \"$component\" >/dev/null 2>&1 || true\n" +
+                        getQuickShareTileOrderScript())).start();
+    }
+
+    private String getQuickShareTileOrderScript() {
+        return "tiles=$(settings get secure sysui_qs_tiles 2>/dev/null)\n" +
+                "cleaned=\"\"\n" +
+                "new_tiles=\"\"\n" +
+                "inserted=false\n" +
+                "if [ -z \"$tiles\" ] || [ \"$tiles\" = \"null\" ]; then\n" +
+                "  settings put secure sysui_qs_tiles \"$tile\"\n" +
+                "else\n" +
+                "  old_ifs=\"$IFS\"\n" +
+                "  IFS=,\n" +
+                "  for item in $tiles; do\n" +
+                "    [ \"$item\" = \"$tile\" ] && continue\n" +
+                "    if [ -z \"$cleaned\" ]; then cleaned=\"$item\"; else cleaned=\"$cleaned,$item\"; fi\n" +
+                "  done\n" +
+                "  for item in $cleaned; do\n" +
+                "    if [ \"$item\" = \"edit\" ] && ! $inserted; then\n" +
+                "      if [ -z \"$new_tiles\" ]; then new_tiles=\"$tile\"; else new_tiles=\"$new_tiles,$tile\"; fi\n" +
+                "      inserted=true\n" +
+                "    fi\n" +
+                "    if [ -z \"$new_tiles\" ]; then new_tiles=\"$item\"; else new_tiles=\"$new_tiles,$item\"; fi\n" +
+                "  done\n" +
+                "  IFS=\"$old_ifs\"\n" +
+                "  if ! $inserted; then\n" +
+                "    if [ -z \"$new_tiles\" ]; then new_tiles=\"$tile\"; else new_tiles=\"$new_tiles,$tile\"; fi\n" +
+                "  fi\n" +
+                "  settings put secure sysui_qs_tiles \"$new_tiles\"\n" +
+                "fi\n";
     }
 
     private void getDeviceStatus() {
@@ -481,6 +647,58 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return -1;
+    }
+
+    private List<String> parseFixedPackages(String output) {
+        ArrayList<String> packages = new ArrayList<>();
+        if (output == null) {
+            return packages;
+        }
+        String[] lines = output.split("\\n");
+        for (String line : lines) {
+            if (!line.startsWith("FIXED_PKG=")) {
+                continue;
+            }
+            String packageName = line.substring("FIXED_PKG=".length()).trim();
+            if (packageName.matches("[A-Za-z0-9._-]+") && !packages.contains(packageName)) {
+                packages.add(packageName);
+            }
+        }
+        return packages;
+    }
+
+    private void showRestrictedPermissionResultDialog(int fixedCount, List<String> packageNames) {
+        StringBuilder message = new StringBuilder();
+        if (packageNames.isEmpty()) {
+            message.append(this.getString(R.string.mainactivity_dialog_restricted_permission_fixed_empty));
+        } else {
+            for (String packageName : packageNames) {
+                if (message.length() > 0) {
+                    message.append('\n');
+                }
+                message.append("- ").append(getPackageDisplayName(packageName));
+            }
+        }
+
+        new AlertDialog.Builder(this)
+                .setTitle(this.getString(R.string.mainactivity_dialog_restricted_permission_fixed_title, fixedCount))
+                .setMessage(message.toString())
+                .setPositiveButton(this.getString(R.string.mainactivity_dialog_ok), null)
+                .show();
+    }
+
+    private String getPackageDisplayName(String packageName) {
+        try {
+            PackageManager packageManager = getPackageManager();
+            ApplicationInfo applicationInfo = packageManager.getApplicationInfo(packageName, 0);
+            CharSequence label = packageManager.getApplicationLabel(applicationInfo);
+            if (label != null && label.length() > 0) {
+                return label.toString() + " (" + packageName + ")";
+            }
+        } catch (Exception e) {
+            Log.w(TAG, "Cannot resolve app label: " + packageName, e);
+        }
+        return packageName;
     }
 
 }

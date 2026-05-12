@@ -28,9 +28,21 @@
     <string name="mainactivity_button_reset_package_restriction">重置包限制</string>
     <string name="mainactivity_button_fix_unknown_source_permission">修复未知来源权限</string>
     <string name="mainactivity_button_save_voiceassist_powerwake">保持小爱按键唤醒</string>
+    <string name="mainactivity_button_save_smartcard_powerwake">保持智能卡双击电源键</string>
+    <string name="mainactivity_button_show_quickshare_tile">显示 Quick Share 磁贴</string>
     <string name="mainactivity_toast_restricted_permission_fixed">已修复 %1$d 个受限应用</string>
     <string name="mainactivity_toast_voiceassist_powerwake_enabled">已启用开机补救，重启后会恢复电源键唤醒</string>
     <string name="mainactivity_toast_voiceassist_powerwake_disabled">已取消开机补救</string>
+    <string name="mainactivity_toast_smartcard_powerwake_enabled">已启用开机补救，重启后会恢复智能卡刷卡页</string>
+    <string name="mainactivity_toast_smartcard_powerwake_disabled">已取消智能卡开机补救</string>
+    <string name="mainactivity_toast_quickshare_tile_enabled">已显示 Quick Share 磁贴，并会在开机后保持</string>
+    <string name="mainactivity_toast_quickshare_tile_disabled">已取消 Quick Share 开机保持</string>
+    <string name="mainactivity_dialog_restricted_permission_fixed_title">已修复 %1$d 个受限应用</string>
+    <string name="mainactivity_dialog_restricted_permission_fixed_empty">未发现需要修复的受限应用</string>
+    <string name="mainactivity_dialog_ok">确定</string>
+    <string name="quickshare_tile_label">快速分享</string>
+    <string name="quickshare_tile_subtitle">打开 Google 快速分享</string>
+    <string name="quickshare_tile_missing_gms">Google 快速分享不可用</string>
     <string name="tool_desc_reset_permission">清除权限缓存并重启，修复权限异常</string>
     <string name="tool_desc_fix_permission">为本地化应用补全系统权限</string>
     <string name="tool_desc_clean_cache">清除包缓存并重启，修复安装失败</string>
@@ -39,4 +51,6 @@
     <string name="tool_desc_allow_sysapp">允许覆盖安装系统应用</string>
     <string name="tool_desc_fix_unknown_source_permission">修复来源非系统应用商店安装导致的敏感权限限制</string>
     <string name="tool_desc_save_voiceassist_powerwake">用于超级小爱重启后电源键唤醒失效</string>
+    <string name="tool_desc_save_smartcard_powerwake">用于智能卡双击电源键重启后失效</string>
+    <string name="tool_desc_show_quickshare_tile">恢复被 CN 标识隐藏的 Google 快传磁贴</string>
 </resources>

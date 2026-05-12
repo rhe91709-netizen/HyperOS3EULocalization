@@ -594,6 +594,8 @@ if ! $Mipay ;then
     rm -rf $MODPATH/system/product/app/MINextpay
     rm -rf $MODPATH/system/product/app/MITSMClient
     rm -rf $MODPATH/system/product/app/MipayService
+    rm -rf $MODPATH/system/product/app/PaymentService
+    rm -rf $MODPATH/system/product/app/UPTsmService
 fi
 
 if ! $HybridPlatform ;then

@@ -29,5 +29,8 @@
         <item>com.miui.mediaeditor</item>
         <item>com.miui.guardprovider</item>
         <item>com.miui.greenguard</item>
+        <item>com.mipay.wallet</item>
+        <item>com.xiaomi.payment</item>
+        <item>com.unionpay.tsmservice.mi</item>
     </string-array>
 </resources>

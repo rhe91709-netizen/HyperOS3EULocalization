@@ -27,9 +27,21 @@
     <string name="mainactivity_button_reset_package_restriction">Reset Package Restrictions</string>
     <string name="mainactivity_button_fix_unknown_source_permission">Fix Unknown Source Permissions</string>
     <string name="mainactivity_button_save_voiceassist_powerwake">Keep XiaoAI Power Wake</string>
+    <string name="mainactivity_button_save_smartcard_powerwake">Keep Smart Card Power Wake</string>
+    <string name="mainactivity_button_show_quickshare_tile">Show Quick Share Tile</string>
     <string name="mainactivity_toast_restricted_permission_fixed">Fixed %1$d restricted apps</string>
     <string name="mainactivity_toast_voiceassist_powerwake_enabled">Power-key wake fix enabled</string>
     <string name="mainactivity_toast_voiceassist_powerwake_disabled">Power-key wake fix disabled</string>
+    <string name="mainactivity_toast_smartcard_powerwake_enabled">Smart Card power-key fix enabled</string>
+    <string name="mainactivity_toast_smartcard_powerwake_disabled">Smart Card power-key fix disabled</string>
+    <string name="mainactivity_toast_quickshare_tile_enabled">Quick Share tile is shown and will be kept after boot</string>
+    <string name="mainactivity_toast_quickshare_tile_disabled">Quick Share boot keep disabled</string>
+    <string name="mainactivity_dialog_restricted_permission_fixed_title">Fixed %1$d restricted apps</string>
+    <string name="mainactivity_dialog_restricted_permission_fixed_empty">No restricted apps need fixing</string>
+    <string name="mainactivity_dialog_ok">OK</string>
+    <string name="quickshare_tile_label">Quick Share</string>
+    <string name="quickshare_tile_subtitle">Open Google Quick Share</string>
+    <string name="quickshare_tile_missing_gms">Google Quick Share is unavailable</string>
     <string name="tool_desc_reset_permission">Clear permission cache and reboot</string>
     <string name="tool_desc_fix_permission">Grant permissions for localized apps</string>
     <string name="tool_desc_clean_cache">Clear package cache and reboot</string>
@@ -38,4 +50,6 @@
     <string name="tool_desc_allow_sysapp">Allow system app override install</string>
     <string name="tool_desc_fix_unknown_source_permission">Fix sensitive-permission limits for apps installed outside the system app store</string>
     <string name="tool_desc_save_voiceassist_powerwake">Fixes XiaoAI power-key wake after reboot</string>
+    <string name="tool_desc_save_smartcard_powerwake">Fixes Smart Card double-power wake after reboot</string>
+    <string name="tool_desc_show_quickshare_tile">Restores the Google transfer tile hidden by CN identity</string>
 </resources>

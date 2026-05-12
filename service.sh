@@ -33,7 +33,7 @@ notification_feature_process() {
 # Force install CN APKs to override EU versions with different signatures
 force_install_cn_apks() {
     local TMPDIR=/data/local/tmp/eu_loc_install
-    local MARKER=$MODDIR/system/etc/localization/.apks_installed_${SYSTEM_VERSION}_guardwarning_v2
+    local MARKER=$MODDIR/system/etc/localization/.apks_installed_${SYSTEM_VERSION}_smartcard_v1
     local LOGFILE=/data/local/tmp/eu_loc_install.log
 
     # Only run if not already done for this system version
@@ -72,6 +72,8 @@ force_install_cn_apks() {
         "$MODDIR/system/product/app/MINextpay/MINextpay.apk" \
         "$MODDIR/system/product/app/MITSMClient/MITSMClient.apk" \
         "$MODDIR/system/product/app/MipayService/MipayService.apk" \
+        "$MODDIR/system/product/app/PaymentService/PaymentService.apk" \
+        "$MODDIR/system/product/app/UPTsmService/UPTsmService.apk" \
         "$MODDIR/system/product/priv-app/MIUIContentExtension/MIUIContentExtension.apk" \
         "$MODDIR/system/product/priv-app/MIUIPersonalAssistantPhoneOS3/MIUIPersonalAssistantPhoneOS3.apk" \
         "$MODDIR/system/product/priv-app/MIUIYellowPage/MIUIYellowPage.apk" \
@@ -96,7 +98,7 @@ force_install_cn_apks() {
         fi
     done
 
-    for pkg in com.miui.guardprovider com.miui.greenguard; do
+    for pkg in com.miui.guardprovider com.miui.greenguard com.xiaomi.payment com.unionpay.tsmservice.mi; do
         cmd package install-existing --user 0 "$pkg" >>"$LOGFILE" 2>&1
         pm enable --user 0 "$pkg" >>"$LOGFILE" 2>&1
         cmd package unsuspend --user 0 "$pkg" >>"$LOGFILE" 2>&1
@@ -132,6 +134,9 @@ start_cn_services() {
     dumpsys deviceidle whitelist +com.xiaomi.aiasst.service >/dev/null 2>&1
     dumpsys deviceidle whitelist +com.xiaomi.aiasst.vision >/dev/null 2>&1
     dumpsys deviceidle whitelist +com.xiaomi.market >/dev/null 2>&1
+    dumpsys deviceidle whitelist +com.miui.tsmclient >/dev/null 2>&1
+    dumpsys deviceidle whitelist +com.miui.nextpay >/dev/null 2>&1
+    dumpsys deviceidle whitelist +com.mipay.wallet >/dev/null 2>&1
 
     # Start VoiceAssist and AI services
     am start-foreground-service -n com.xiaomi.aiasst.service/.AiAsstService >/dev/null 2>&1
@@ -155,6 +160,95 @@ restore_voiceassist_powerwake() {
         settings put system should_filter_toolbox 1 >/dev/null 2>&1
         settings put system long_press_power_key launch_voice_assistant >/dev/null 2>&1
         settings put system long_press_power_launch_xiaoai 1 >/dev/null 2>&1
+    done
+}
+
+restore_smartcard_powerwake() {
+    local marker="$MODDIR/smartcard_powerwake.enabled"
+
+    [ -f "$marker" ] || return
+
+    while [ "$(getprop sys.boot_completed)" != "1" ]; do
+        sleep 2
+    done
+
+    for i in 1 2; do
+        sleep 20
+        settings put system double_click_power_key mi_pay >/dev/null 2>&1
+    done
+}
+
+ensure_quickshare_tile_order() {
+    local tile="$1"
+    local tiles="$2"
+    local cleaned=""
+    local new_tiles=""
+    local item
+    local old_ifs
+    local inserted=false
+
+    if [ -z "$tiles" ] || [ "$tiles" = "null" ]; then
+        settings put secure sysui_qs_tiles "$tile" >/dev/null 2>&1
+        return
+    fi
+
+    old_ifs="$IFS"
+    IFS=,
+    for item in $tiles; do
+        [ "$item" = "$tile" ] && continue
+        if [ -z "$cleaned" ]; then
+            cleaned="$item"
+        else
+            cleaned="$cleaned,$item"
+        fi
+    done
+
+    for item in $cleaned; do
+        if [ "$item" = "edit" ] && ! $inserted; then
+            if [ -z "$new_tiles" ]; then
+                new_tiles="$tile"
+            else
+                new_tiles="$new_tiles,$tile"
+            fi
+            inserted=true
+        fi
+        if [ -z "$new_tiles" ]; then
+            new_tiles="$item"
+        else
+            new_tiles="$new_tiles,$item"
+        fi
+    done
+    IFS="$old_ifs"
+
+    if ! $inserted; then
+        if [ -z "$new_tiles" ]; then
+            new_tiles="$tile"
+        else
+            new_tiles="$new_tiles,$tile"
+        fi
+    fi
+
+    settings put secure sysui_qs_tiles "$new_tiles" >/dev/null 2>&1
+}
+
+restore_quickshare_tile() {
+    local marker="$MODDIR/google_quickshare_tile.enabled"
+    local component="com.lshfgj.minamigo.HyperOS3EULocalization/.QuickShareTileService"
+    local tile="custom($component)"
+    local tiles
+
+    [ -f "$marker" ] || return
+
+    while [ "$(getprop sys.boot_completed)" != "1" ]; do
+        sleep 2
+    done
+
+    for i in 1 2; do
+        sleep 20
+        pm enable --user 0 "$component" >/dev/null 2>&1 || true
+        cmd statusbar add-tile "$component" >/dev/null 2>&1 || true
+        tiles="$(settings get secure sysui_qs_tiles 2>/dev/null)"
+        ensure_quickshare_tile_order "$tile" "$tiles"
     done
 }
 
@@ -187,6 +281,8 @@ cache_clean
 force_install_cn_apks &
 start_cn_services &
 restore_voiceassist_powerwake &
+restore_smartcard_powerwake &
+restore_quickshare_tile &
 notification_feature_process
 
 if $MiPush ; then
