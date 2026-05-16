@@ -384,6 +384,50 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 
+    public void fixMediaEditorAiRemoverHandler(View view) {
+        if (!this.isRooted) {
+            Toast.makeText(this, nonrootToastString, Toast.LENGTH_SHORT).show();
+            return;
+        } else if (!isMagiskModuleInstalled) {
+            Toast.makeText(this, this.getString(R.string.mainactivity_toast_not_magisk_module_installed),
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Toast.makeText(this, processingToastString, Toast.LENGTH_SHORT).show();
+
+        new Thread(() -> {
+            String output = rootCommandForOutput("sh /system/etc/localization/tools/repairMediaEditorAiRemover.sh");
+
+            runOnUiThread(() -> {
+                if (output == null) {
+                    Toast.makeText(this, processFailedToastString, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (output.contains("AI_REMOVER_FIX_STATE=fixed")) {
+                    Toast.makeText(this,
+                            this.getString(R.string.mainactivity_toast_mediaeditor_ai_remover_fixed),
+                            Toast.LENGTH_LONG).show();
+                    return;
+                }
+                if (output.contains("AI_REMOVER_FIX_STATE=unsupported_device")) {
+                    Toast.makeText(this,
+                            this.getString(R.string.mainactivity_toast_mediaeditor_ai_remover_unsupported),
+                            Toast.LENGTH_LONG).show();
+                    return;
+                }
+                if (output.contains("AI_REMOVER_FIX_STATE=already_sd")
+                        || output.contains("AI_REMOVER_FIX_STATE=no_mtk_cache")
+                        || output.contains("AI_REMOVER_FIX_STATE=no_data")) {
+                    Toast.makeText(this,
+                            this.getString(R.string.mainactivity_toast_mediaeditor_ai_remover_clean),
+                            Toast.LENGTH_LONG).show();
+                    return;
+                }
+                Toast.makeText(this, processFailedToastString, Toast.LENGTH_SHORT).show();
+            });
+        }).start();
+    }
+
     private void preserveVoiceAssistPowerWakeIfEnabled() {
         if (!this.isRooted) {
             return;

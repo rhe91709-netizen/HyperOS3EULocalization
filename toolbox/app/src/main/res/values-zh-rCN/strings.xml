@@ -30,6 +30,7 @@
     <string name="mainactivity_button_save_voiceassist_powerwake">保持小爱按键唤醒</string>
     <string name="mainactivity_button_save_smartcard_powerwake">保持智能卡双击电源键</string>
     <string name="mainactivity_button_show_quickshare_tile">显示 Quick Share 磁贴</string>
+    <string name="mainactivity_button_fix_mediaeditor_ai_remover">修复相册 AI 去人</string>
     <string name="mainactivity_toast_restricted_permission_fixed">已修复 %1$d 个受限应用</string>
     <string name="mainactivity_toast_voiceassist_powerwake_enabled">已启用开机补救，重启后会恢复电源键唤醒</string>
     <string name="mainactivity_toast_voiceassist_powerwake_disabled">已取消开机补救</string>
@@ -37,6 +38,9 @@
     <string name="mainactivity_toast_smartcard_powerwake_disabled">已取消智能卡开机补救</string>
     <string name="mainactivity_toast_quickshare_tile_enabled">已显示 Quick Share 磁贴，并会在开机后保持</string>
     <string name="mainactivity_toast_quickshare_tile_disabled">已取消 Quick Share 开机保持</string>
+    <string name="mainactivity_toast_mediaeditor_ai_remover_fixed">已修复 AI 去人缓存，请重新打开相册再试</string>
+    <string name="mainactivity_toast_mediaeditor_ai_remover_clean">未发现错误 MTK AI 去人缓存</string>
+    <string name="mainactivity_toast_mediaeditor_ai_remover_unsupported">此修复仅适用于 nezha</string>
     <string name="mainactivity_dialog_restricted_permission_fixed_title">已修复 %1$d 个受限应用</string>
     <string name="mainactivity_dialog_restricted_permission_fixed_empty">未发现需要修复的受限应用</string>
     <string name="mainactivity_dialog_ok">确定</string>
@@ -53,4 +57,5 @@
     <string name="tool_desc_save_voiceassist_powerwake">用于超级小爱重启后电源键唤醒失效</string>
     <string name="tool_desc_save_smartcard_powerwake">用于智能卡双击电源键重启后失效</string>
     <string name="tool_desc_show_quickshare_tile">恢复被 CN 标识隐藏的 Google 快传磁贴</string>
+    <string name="tool_desc_fix_mediaeditor_ai_remover">清理错误 MTK 模型缓存并重新拉取高通配置</string>
 </resources>

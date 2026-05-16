@@ -153,7 +153,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:columnCount="2"
-        android:rowCount="5"
+        android:rowCount="6"
         android:layout_marginBottom="12dp">
 
         <!-- Row 1, Col 1: Reset Permission -->
@@ -520,6 +520,43 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/tool_desc_show_quickshare_tile"
+                    android:textColor="#666666"
+                    android:textSize="11sp"
+                    android:lineSpacingExtra="2dp" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Row 6, Col 1: MediaEditor AI remover fix -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:layout_margin="4dp"
+            app:cardBackgroundColor="#1A1A1A"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="0dp"
+            app:strokeColor="#2A2A2A"
+            app:strokeWidth="1dp"
+            android:onClick="fixMediaEditorAiRemoverHandler">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="14dp"
+                android:gravity="center_vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/mainactivity_button_fix_mediaeditor_ai_remover"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="6dp" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tool_desc_fix_mediaeditor_ai_remover"
                     android:textColor="#666666"
                     android:textSize="11sp"
                     android:lineSpacingExtra="2dp" />

@@ -29,6 +29,7 @@
     <string name="mainactivity_button_save_voiceassist_powerwake">Keep XiaoAI Power Wake</string>
     <string name="mainactivity_button_save_smartcard_powerwake">Keep Smart Card Power Wake</string>
     <string name="mainactivity_button_show_quickshare_tile">Show Quick Share Tile</string>
+    <string name="mainactivity_button_fix_mediaeditor_ai_remover">Fix Gallery AI Remover</string>
     <string name="mainactivity_toast_restricted_permission_fixed">Fixed %1$d restricted apps</string>
     <string name="mainactivity_toast_voiceassist_powerwake_enabled">Power-key wake fix enabled</string>
     <string name="mainactivity_toast_voiceassist_powerwake_disabled">Power-key wake fix disabled</string>
@@ -36,6 +37,9 @@
     <string name="mainactivity_toast_smartcard_powerwake_disabled">Smart Card power-key fix disabled</string>
     <string name="mainactivity_toast_quickshare_tile_enabled">Quick Share tile is shown and will be kept after boot</string>
     <string name="mainactivity_toast_quickshare_tile_disabled">Quick Share boot keep disabled</string>
+    <string name="mainactivity_toast_mediaeditor_ai_remover_fixed">AI remover cache fixed. Reopen Gallery and try again</string>
+    <string name="mainactivity_toast_mediaeditor_ai_remover_clean">No wrong MTK AI remover cache found</string>
+    <string name="mainactivity_toast_mediaeditor_ai_remover_unsupported">This fix only applies to nezha</string>
     <string name="mainactivity_dialog_restricted_permission_fixed_title">Fixed %1$d restricted apps</string>
     <string name="mainactivity_dialog_restricted_permission_fixed_empty">No restricted apps need fixing</string>
     <string name="mainactivity_dialog_ok">OK</string>
@@ -52,4 +56,5 @@
     <string name="tool_desc_save_voiceassist_powerwake">Fixes XiaoAI power-key wake after reboot</string>
     <string name="tool_desc_save_smartcard_powerwake">Fixes Smart Card double-power wake after reboot</string>
     <string name="tool_desc_show_quickshare_tile">Restores the Google transfer tile hidden by CN identity</string>
+    <string name="tool_desc_fix_mediaeditor_ai_remover">Clears wrong MTK model cache and redownloads SD config</string>
 </resources>

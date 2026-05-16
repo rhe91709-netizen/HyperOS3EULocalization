@@ -15,6 +15,12 @@ else
     MiPush=false
 fi
 
+if [ -f $MODDIR/system/etc/localization/MediaEditorAiFix ] ;then
+    MediaEditorAiFix=true
+else
+    MediaEditorAiFix=false
+fi
+
 cache_clean() {
     if [ ! -f $MODDIR/system/etc/localization/SystemVersion/$SYSTEM_VERSION ] ;then
         rm -rf /data/system/package_cache/*
@@ -252,6 +258,19 @@ restore_quickshare_tile() {
     done
 }
 
+repair_mediaeditor_ai_remover() {
+    $MediaEditorAiFix || return
+
+    while [ "$(getprop sys.boot_completed)" != "1" ]; do
+        sleep 2
+    done
+
+    sleep 45
+    if [ -x "$MODDIR/system/etc/localization/tools/repairMediaEditorAiRemover.sh" ]; then
+        sh "$MODDIR/system/etc/localization/tools/repairMediaEditorAiRemover.sh" >> /data/local/tmp/eu_loc_mediaeditor_ai_fix.log 2>&1
+    fi
+}
+
 set_mipush_region() {
     local base_dir
     local files_dir
@@ -283,6 +302,7 @@ start_cn_services &
 restore_voiceassist_powerwake &
 restore_smartcard_powerwake &
 restore_quickshare_tile &
+repair_mediaeditor_ai_remover &
 notification_feature_process
 
 if $MiPush ; then

@@ -406,6 +406,16 @@ else
 fi
 ui_print ""
 
+if [[ $MediaEditorAiFix == true ]] ;then
+    ui_print "   [+] 相册 AI 去人闪退修复"
+elif [[ $MediaEditorAiFix == false ]] ;then
+    ui_print "   [-] 相册 AI 去人闪退修复"
+else
+    ui_print "   [?] 相册 AI 去人闪退修复 (not found, skip)"
+    MediaEditorAiFix=false
+fi
+ui_print ""
+
 if [[ $MiPush == true ]] ;then
     ui_print "   [+] 小米推送 MiPush CN 区"
 elif [[ $MiPush == false ]] ;then
@@ -541,6 +551,10 @@ fi
 
 if $MediaEditor ;then
     touch $MODPATH/system/etc/localization/MediaEditor
+fi
+
+if $MediaEditorAiFix ;then
+    touch $MODPATH/system/etc/localization/MediaEditorAiFix
 fi
 
 if $MiPush ;then

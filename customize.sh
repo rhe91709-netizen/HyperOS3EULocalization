@@ -87,7 +87,7 @@ set_config() {
 }
 
 enable_all() {
-    local keys="Mipay VoiceAssist PersonalAssistant Weather Calendar Music SoundRecorder ThemeManager Mms ContentExtension YellowPage AiAsst VoiceTrigger RemoveMod Fonts HybridPlatform VirtualSim MiuiIme SogouInput GboardTheme VideocallBeautify NotificationFilter Contacts AppStore Gallery MediaEditor MiPush GuardProvider GreenGuard"
+    local keys="Mipay VoiceAssist PersonalAssistant Weather Calendar Music SoundRecorder ThemeManager Mms ContentExtension YellowPage AiAsst VoiceTrigger RemoveMod Fonts HybridPlatform VirtualSim MiuiIme SogouInput GboardTheme VideocallBeautify NotificationFilter Contacts AppStore Gallery MediaEditor MediaEditorAiFix MiPush GuardProvider GreenGuard"
     for key in $keys; do
         set_config $key "true"
     done
@@ -121,6 +121,7 @@ AppStore=false
 RemoveMod=false
 Gallery=false
 MediaEditor=false
+MediaEditorAiFix=false
 MiPush=false
 GuardProvider=false
 GreenGuard=false
@@ -256,6 +257,19 @@ else
         print_success "已选中：国行相册 & 编辑器"
         set_config "Gallery" "true"
         set_config "MediaEditor" "true"
+        set_config "MediaEditorAiFix" "true"
+    else
+        print_info "已跳过"
+    fi
+    ui_print ""
+
+    ui_print "  ┌─────────────────────────────────────────────────────────────┐"
+    ui_print "  │  Q7.5: 相册 AI 去人闪退修复                                 │"
+    ui_print "  │      清理错误 MTK 模型缓存，让编辑器重新拉取高通 SD 配置      │"
+    ui_print "  └─────────────────────────────────────────────────────────────┘"
+    if vk_choose; then
+        print_success "已选中：相册 AI 去人闪退修复"
+        set_config "MediaEditorAiFix" "true"
     else
         print_info "已跳过"
     fi
