@@ -21,7 +21,7 @@ print_banner() {
     ui_print "║           HyperOS 3 EU Localization Module                   ║"
     ui_print "║                                                              ║"
     ui_print "╠══════════════════════════════════════════════════════════════╣"
-    ui_print "║  Version: OS3.0.305.0                                         ║"
+    ui_print "║  Version: OS3.0.307.0                                         ║"
     ui_print "║  Author:  LSHFGJ & MinaMiGo                                  ║"
     ui_print "║  Target:  Xiaomi 17 Ultra (nezha) - xiaomi.eu HyperOS3       ║"
     ui_print "╚══════════════════════════════════════════════════════════════╝"
@@ -182,6 +182,8 @@ else
     ui_print "  ┌─────────────────────────────────────────────────────────────┐"
     ui_print "  │  Q2.5: 小米推送 MiPush (CN 区)                              │"
     ui_print "  │      切换 XMSF 推送服务器至中国区                            │"
+    ui_print "  │      说明：本模块不内置/安装 com.xiaomi.xmsf                 │"
+    ui_print "  │      若系统已有 XMSF，则写入 CN/China 区域配置               │"
     ui_print "  └─────────────────────────────────────────────────────────────┘"
     if vk_choose; then
         print_success "已选中：MiPush CN 区"

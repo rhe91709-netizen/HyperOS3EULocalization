@@ -62,14 +62,6 @@ public class MainModule implements IXposedHookLoadPackage {
                     XposedBridge.log("Hooked " + pkg + " Error: " + e.toString());
                 }
                 break;
-            case "com.android.systemui":
-                try {
-                    bypassSignatureChecks(lpparam); // Add bypass here
-                    handleSystemUI(lpparam);
-                } catch (Exception e) {
-                    XposedBridge.log("Hooked " + pkg + " Error: " + e.toString());
-                }
-                break;
             case "android":
                 try {
                     handleInternational(lpparam);

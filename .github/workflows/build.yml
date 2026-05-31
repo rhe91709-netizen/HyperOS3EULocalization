@@ -59,7 +59,7 @@ jobs:
         id: version
         run: |
           VERSION=$(grep "versionName" toolbox/app/build.gradle | sed 's/.*versionName "\(.*\)"/\1/' | tr -d ' ')
-          # Strip OS3.0 prefix and convert last dot to dash → "305.0-WPACNXM"
+          # Strip OS3.0 prefix and convert last dot to dash, e.g. "307.0-WPACNXM"
           SHORT=$(echo "$VERSION" | sed 's/^OS3\.0\.//' | sed 's/\.\([A-Z][A-Z0-9]*\)$/-\1/')
           SHA=$(echo "$GITHUB_SHA" | cut -c1-7)
           TAG="v${SHORT}-${SHA}"

@@ -15,6 +15,14 @@ Reintegrate original HyperOS features for xiaomi.eu HyperOS3 ROM.
 - MiPush 推送切换至中国区服务器
 - Xposed 模块提供签名绕过和系统增强
 
+### MiPush 说明
+
+本模块不会内置或安装 `com.xiaomi.xmsf` / `XiaomiServiceFrameworkCN`。
+启用 MiPush 选项后，仅会写入小米推送区域配置为 `CN` / `China`。
+
+如果当前系统或用户环境中已存在 `com.xiaomi.xmsf`，该配置可能生效；
+如果系统中不存在 `com.xiaomi.xmsf`，本模块不会单独补齐小米推送框架。
+
 ## 安装要求 / Requirements
 
 - **设备**：Xiaomi 17 Ultra (nezha)
