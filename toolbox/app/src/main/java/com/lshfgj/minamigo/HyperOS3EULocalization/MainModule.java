@@ -509,6 +509,33 @@ public class MainModule implements IXposedHookLoadPackage {
             XposedBridge.log("HyperOS3 Localization: MIUI installer source whitelist hook failed: " + e);
         }
 
+        try {
+            Class<?> packageUtilsClass = XposedHelpers.findClassIfExists(
+                    "com.android.packageinstaller.d", lpparam.classLoader);
+            if (packageUtilsClass != null) {
+                XposedBridge.hookAllMethods(packageUtilsClass, "t", new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) {
+                        if (!isMiuiSystemAppInstallBypassEnabled()) {
+                            return;
+                        }
+                        Object result = param.getResult();
+                        if (!Boolean.TRUE.equals(result)) {
+                            return;
+                        }
+                        if (param.args.length >= 2 && param.args[1] instanceof String) {
+                            XposedBridge.log("HyperOS3 Localization: MIUI installer system-app source gate bypassed for "
+                                    + param.args[1]);
+                        }
+                        param.setResult(Boolean.FALSE);
+                    }
+                });
+                XposedBridge.log("HyperOS3 Localization: MIUI installer system-app source gate hook installed");
+            }
+        } catch (Exception e) {
+            XposedBridge.log("HyperOS3 Localization: MIUI installer system-app source gate hook failed: " + e);
+        }
+
         final Class<?> apkInfoClass = XposedHelpers.findClassIfExists(
                 "com.miui.packageInstaller.model.ApkInfo", lpparam.classLoader);
         final Class<?> cloudParamsClass = XposedHelpers.findClassIfExists(
