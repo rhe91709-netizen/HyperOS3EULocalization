@@ -80,7 +80,7 @@ NOTES="## HyperOS 3 EU Localization — nezha (Xiaomi 17 Ultra)
 ### 功能 / Features
 - 国行相册 v5.0（Flutter 架构）
 - 国行相册编辑器 v4.2.5
-- 相册 AI 去人闪退修复：清理错误 MTK 模型缓存并重新拉取高通 SD 配置
+- 相册 AI 去人闪退修复：清理错误 MTK 缓存并补齐 nezha 高通 SD_HIGH 去人模型
 - 电诈防护 / 通话防护 / AI 通话预警
 - 安全守护 / 家人守护
 - 地震预警、自然灾害预警订阅地区修复

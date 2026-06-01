@@ -361,8 +361,8 @@ else
 fi
 ui_print ""
 
-if [ ! -e $MODPATH/system/app/MiuiAudioMonitor_$API ] ;then
-    SoundRecorder = false
+if [ ! -e $MODPATH/system/system_ext/app/MiuiAudioMonitor_$API ] ;then
+    SoundRecorder=false
     ui_print "   ${LANG_TEXT_READING_CONFIG_UNSUPPORT} ${LANG_TEXT_READING_CONFIG_SOUNUDRECORDER}"
 else
     if [[ $SoundRecorder == true ]] ;then
@@ -371,7 +371,7 @@ else
         ui_print "   ${LANG_TEXT_READING_CONFIG_FALSE} ${LANG_TEXT_READING_CONFIG_SOUNUDRECORDER}"
     else
         ui_print "   ${LANG_TEXT_READING_CONFIG_NOT_FOUND} ${LANG_TEXT_READING_CONFIG_SOUNUDRECORDER}"
-        SoundRecorder = false
+        SoundRecorder=false
     fi
 fi
 ui_print ""
@@ -674,11 +674,16 @@ if ! $Music ;then
 fi
 
 if ! $SoundRecorder ;then
+    rm -rf $MODPATH/system/system_ext/app/MiuiAudioMonitor_*
+    rm -rf $MODPATH/system/system_ext/app/MiuiAudioMonitor
     rm -rf $MODPATH/system/app/MiuiAudioMonitor_*
+    rm -rf $MODPATH/system/app/MiuiAudioMonitor
     rm -rf $MODPATH/system/product/priv-app/SoundRecorder
 else
-    mv $MODPATH/system/app/MiuiAudioMonitor_$API $MODPATH/system/app/MiuiAudioMonitor
+    mv $MODPATH/system/system_ext/app/MiuiAudioMonitor_$API $MODPATH/system/system_ext/app/MiuiAudioMonitor
+    rm -rf $MODPATH/system/system_ext/app/MiuiAudioMonitor_*
     rm -rf $MODPATH/system/app/MiuiAudioMonitor_*
+    rm -rf $MODPATH/system/app/MiuiAudioMonitor
 fi
 
 if ! $Contacts ;then
@@ -715,7 +720,7 @@ else
 fi
 
 if ! $MiuiContentCatcher ;then
-    rm -rf $MODPATH/system/system_ext/app/MiuiContentCatcher
+    rm -rf $MODPATH/system/product/app/MiuiContentCatcher
 fi
 
 if ! $ContentExtension ;then

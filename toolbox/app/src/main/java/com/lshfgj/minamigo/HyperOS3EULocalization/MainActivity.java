@@ -180,17 +180,30 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, nonrootToastString, Toast.LENGTH_SHORT).show();
             return;
         }
-        boolean ok = rootCommand("setprop persist.sys.allow_sys_app_update true")
-                && rootCommand("settings put secure miui_optimization 0")
-                && rootCommand("settings put global force_allow_on_external 1")
-                && rootCommand("settings put global miui_security_mode_style off")
-                && rootCommand("settings put secure pure_mode_open_time 0")
-                && rootCommand("pm clear com.miui.packageinstaller");
-        if (!ok) {
-            Toast.makeText(this, processFailedToastString, Toast.LENGTH_SHORT).show();
-            return;
-        }
-        Toast.makeText(this, processSuccessedToastString, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, processingToastString, Toast.LENGTH_SHORT).show();
+
+        new Thread(() -> {
+            String output = rootCommandForOutput(
+                    "setprop persist.hyperos3.allow_sys_app_update true\n" +
+                            "pm enable --user 0 com.miui.packageinstaller >/dev/null 2>&1 || cmd package install-existing --user 0 com.miui.packageinstaller >/dev/null 2>&1 || true\n" +
+                            "pm enable --user 0 com.android.packageinstaller >/dev/null 2>&1 || cmd package install-existing --user 0 com.android.packageinstaller >/dev/null 2>&1 || true\n" +
+                            "pm clear com.miui.packageinstaller >/dev/null 2>&1 || true\n" +
+                            "echo SYSAPP_UPDATE_MODE=miui\n");
+
+            runOnUiThread(() -> {
+                if (output == null) {
+                    Toast.makeText(this, processFailedToastString, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (output.contains("SYSAPP_UPDATE_MODE=miui")) {
+                    Toast.makeText(this,
+                            this.getString(R.string.mainactivity_toast_miui_sysapp_install_enabled),
+                            Toast.LENGTH_LONG).show();
+                    return;
+                }
+                Toast.makeText(this, processFailedToastString, Toast.LENGTH_SHORT).show();
+            });
+        }).start();
     }
 
     public void fixUnknownSourcePermissionsHandler(View view) {
@@ -397,6 +410,7 @@ public class MainActivity extends AppCompatActivity {
 
         new Thread(() -> {
             String output = rootCommandForOutput("sh /system/etc/localization/tools/repairMediaEditorAiRemover.sh");
+            final List<String> fixedItems = parseOutputValues(output, "AI_REMOVER_FIX_ITEM=");
 
             runOnUiThread(() -> {
                 if (output == null) {
@@ -404,9 +418,7 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
                 if (output.contains("AI_REMOVER_FIX_STATE=fixed")) {
-                    Toast.makeText(this,
-                            this.getString(R.string.mainactivity_toast_mediaeditor_ai_remover_fixed),
-                            Toast.LENGTH_LONG).show();
+                    showMediaEditorAiRemoverResultDialog(fixedItems);
                     return;
                 }
                 if (output.contains("AI_REMOVER_FIX_STATE=unsupported_device")) {
@@ -694,21 +706,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private List<String> parseFixedPackages(String output) {
-        ArrayList<String> packages = new ArrayList<>();
+        return parseOutputValues(output, "FIXED_PKG=");
+    }
+
+    private List<String> parseOutputValues(String output, String prefix) {
+        ArrayList<String> values = new ArrayList<>();
         if (output == null) {
-            return packages;
+            return values;
         }
         String[] lines = output.split("\\n");
         for (String line : lines) {
-            if (!line.startsWith("FIXED_PKG=")) {
+            if (!line.startsWith(prefix)) {
                 continue;
             }
-            String packageName = line.substring("FIXED_PKG=".length()).trim();
-            if (packageName.matches("[A-Za-z0-9._-]+") && !packages.contains(packageName)) {
-                packages.add(packageName);
+            String value = line.substring(prefix.length()).trim();
+            if (value.length() > 0 && !values.contains(value)) {
+                values.add(value);
             }
         }
-        return packages;
+        return values;
     }
 
     private void showRestrictedPermissionResultDialog(int fixedCount, List<String> packageNames) {
@@ -726,6 +742,26 @@ public class MainActivity extends AppCompatActivity {
 
         new AlertDialog.Builder(this)
                 .setTitle(this.getString(R.string.mainactivity_dialog_restricted_permission_fixed_title, fixedCount))
+                .setMessage(message.toString())
+                .setPositiveButton(this.getString(R.string.mainactivity_dialog_ok), null)
+                .show();
+    }
+
+    private void showMediaEditorAiRemoverResultDialog(List<String> fixedItems) {
+        StringBuilder message = new StringBuilder();
+        if (fixedItems.isEmpty()) {
+            message.append(this.getString(R.string.mainactivity_toast_mediaeditor_ai_remover_fixed));
+        } else {
+            for (String item : fixedItems) {
+                if (message.length() > 0) {
+                    message.append('\n');
+                }
+                message.append("- ").append(item);
+            }
+        }
+
+        new AlertDialog.Builder(this)
+                .setTitle(this.getString(R.string.mainactivity_dialog_mediaeditor_ai_remover_fixed_title))
                 .setMessage(message.toString())
                 .setPositiveButton(this.getString(R.string.mainactivity_dialog_ok), null)
                 .show();

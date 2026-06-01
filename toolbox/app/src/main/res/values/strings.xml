@@ -38,10 +38,12 @@
     <string name="mainactivity_toast_quickshare_tile_enabled">Quick Share tile is shown and will be kept after boot</string>
     <string name="mainactivity_toast_quickshare_tile_disabled">Quick Share boot keep disabled</string>
     <string name="mainactivity_toast_mediaeditor_ai_remover_fixed">AI remover cache fixed. Reopen Gallery and try again</string>
-    <string name="mainactivity_toast_mediaeditor_ai_remover_clean">No wrong MTK AI remover cache found</string>
+    <string name="mainactivity_toast_mediaeditor_ai_remover_clean">No known wrong MTK remover cache found. Reproduce and capture logs if it still crashes</string>
     <string name="mainactivity_toast_mediaeditor_ai_remover_unsupported">This fix only applies to nezha</string>
+    <string name="mainactivity_toast_miui_sysapp_install_enabled">MIUI installer system-app update bypass enabled. Check LSPosed installer scope</string>
     <string name="mainactivity_dialog_restricted_permission_fixed_title">Fixed %1$d restricted apps</string>
     <string name="mainactivity_dialog_restricted_permission_fixed_empty">No restricted apps need fixing</string>
+    <string name="mainactivity_dialog_mediaeditor_ai_remover_fixed_title">Gallery AI remover fixed</string>
     <string name="mainactivity_dialog_ok">OK</string>
     <string name="quickshare_tile_label">Quick Share</string>
     <string name="quickshare_tile_subtitle">Open Google Quick Share</string>
@@ -51,10 +53,10 @@
     <string name="tool_desc_clean_cache">Clear package cache and reboot</string>
     <string name="tool_desc_reset_restriction">Restore disabled/hidden apps</string>
     <string name="tool_desc_hide_theme">Hide theme images from gallery</string>
-    <string name="tool_desc_allow_sysapp">Allow system app override install</string>
+    <string name="tool_desc_allow_sysapp">Keep MIUI installer and allow system app override installs</string>
     <string name="tool_desc_fix_unknown_source_permission">Fix sensitive-permission limits for apps installed outside the system app store</string>
     <string name="tool_desc_save_voiceassist_powerwake">Fixes XiaoAI power-key wake after reboot</string>
     <string name="tool_desc_save_smartcard_powerwake">Fixes Smart Card double-power wake after reboot</string>
     <string name="tool_desc_show_quickshare_tile">Restores the Google transfer tile hidden by CN identity</string>
-    <string name="tool_desc_fix_mediaeditor_ai_remover">Clears wrong MTK model cache and redownloads SD config</string>
+    <string name="tool_desc_fix_mediaeditor_ai_remover">Clears wrong MTK cache and fills nezha SD_HIGH remover model</string>
 </resources>

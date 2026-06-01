@@ -88,8 +88,8 @@ force_install_cn_apks() {
         "$MODDIR/system/product/data-app/MIUIMusicT/MIUIMusicT.apk" \
         "$MODDIR/system/product/data-app/MIUIWeather/MIUIWeather.apk" \
         "$MODDIR/system/app/ThemeManager/ThemeManager.apk" \
-        "$MODDIR/system/app/MiuiAudioMonitor_36/MiuiAudioMonitor.apk" \
-        "$MODDIR/system/system_ext/app/MiuiContentCatcher/MiuiContentCatcher.apk" \
+        "$MODDIR/system/system_ext/app/MiuiAudioMonitor/MiuiAudioMonitor.apk" \
+        "$MODDIR/system/product/app/MiuiContentCatcher/MiuiContentCatcher.apk" \
         "$MODDIR/system/product/priv-app/Contacts/Contacts.apk" \
         "$MODDIR/system/product/priv-app/SoundRecorder/SoundRecorder.apk" \
         "$MODDIR/system/product/priv-app/MiuiGallery/MIUIGallery.apk" \
@@ -267,7 +267,7 @@ repair_mediaeditor_ai_remover() {
 
     sleep 45
     if [ -x "$MODDIR/system/etc/localization/tools/repairMediaEditorAiRemover.sh" ]; then
-        sh "$MODDIR/system/etc/localization/tools/repairMediaEditorAiRemover.sh" >> /data/local/tmp/eu_loc_mediaeditor_ai_fix.log 2>&1
+        AI_REMOVER_FIX_WAIT_ROUNDS=90 sh "$MODDIR/system/etc/localization/tools/repairMediaEditorAiRemover.sh" >> /data/local/tmp/eu_loc_mediaeditor_ai_fix.log 2>&1
     fi
 }
 
