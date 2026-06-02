@@ -22,9 +22,11 @@ else
 fi
 
 cache_clean() {
+    mkdir -p $MODDIR/system/etc/localization/SystemVersion
     if [ ! -f $MODDIR/system/etc/localization/SystemVersion/$SYSTEM_VERSION ] ;then
         rm -rf /data/system/package_cache/*
         rm -rf $MODDIR/system/etc/localization/SystemVersion/*
+        mkdir -p $MODDIR/system/etc/localization/SystemVersion
         touch $MODDIR/system/etc/localization/SystemVersion/$SYSTEM_VERSION
     fi
 }
@@ -184,6 +186,22 @@ restore_smartcard_powerwake() {
     done
 }
 
+repair_personalassistant_boot() {
+    [ -f "$MODDIR/system/etc/localization/PersonalAssistant" ] || return
+
+    while [ "$(getprop sys.boot_completed)" != "1" ]; do
+        sleep 2
+    done
+
+    sleep 25
+    cmd package install-existing --user 0 com.miui.personalassistant >/dev/null 2>&1
+    pm enable --user 0 com.miui.personalassistant >/dev/null 2>&1
+    cmd package unsuspend --user 0 com.miui.personalassistant >/dev/null 2>&1
+    cmd package compile -f -m speed-profile com.miui.personalassistant >/dev/null 2>&1 ||
+        cmd package compile -f -m verify com.miui.personalassistant >/dev/null 2>&1
+    am broadcast -a android.intent.action.BOOT_COMPLETED -p com.miui.personalassistant >/dev/null 2>&1
+}
+
 ensure_quickshare_tile_order() {
     local tile="$1"
     local tiles="$2"
@@ -301,6 +319,7 @@ force_install_cn_apks &
 start_cn_services &
 restore_voiceassist_powerwake &
 restore_smartcard_powerwake &
+repair_personalassistant_boot &
 restore_quickshare_tile &
 repair_mediaeditor_ai_remover &
 notification_feature_process

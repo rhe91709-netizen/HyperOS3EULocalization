@@ -141,7 +141,11 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, nonrootToastString, Toast.LENGTH_SHORT).show();
             return;
         }
-        if (!rootCommand("rm -f /sdcard/HyperOS3EULocalization/ErrorLog.tar rm -rf /data/system/dropbox/*wtf@*")) {
+        if (rootCommandForOutput(
+                "rm -f /sdcard/HyperOS3EULocalization/ErrorLog.tar; " +
+                        "rm -rf /sdcard/HyperOS3EULocalization/ErrorLog; " +
+                        "rm -f /data/system/dropbox/*wtf* /data/system/dropbox/*crash* 2>/dev/null; " +
+                        "echo OK") == null) {
             Toast.makeText(this, processFailedToastString, Toast.LENGTH_SHORT).show();
             return;
         }
@@ -153,8 +157,36 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, nonrootToastString, Toast.LENGTH_SHORT).show();
             return;
         }
-        if (!rootCommand(
-                "[ -d /sdcard/HyperOS3EULocalization ] || mkdir /sdcard/HyperOS3EULocalization && tar -cf /sdcard/HyperOS3EULocalization/ErrorLog.tar /data/system/dropbox/*wtf@* /system/build.prop /system/etc/localization")) {
+        String command =
+                "OUT=/sdcard/HyperOS3EULocalization; " +
+                        "TMP=$OUT/ErrorLog; " +
+                        "rm -rf \"$TMP\" \"$OUT/ErrorLog.tar\"; " +
+                        "mkdir -p \"$TMP/dropbox\" \"$TMP/module\" \"$TMP/lspd\"; " +
+                        "date > \"$TMP/date.txt\"; " +
+                        "getprop > \"$TMP/getprop.txt\" 2>&1; " +
+                        "logcat -d -v time > \"$TMP/logcat.txt\" 2>&1; " +
+                        "dmesg > \"$TMP/dmesg.txt\" 2>&1; " +
+                        "cp /system/build.prop \"$TMP/build.prop\" 2>/dev/null || true; " +
+                        "cp /data/local/tmp/eu_loc_install.log \"$TMP/eu_loc_install.log\" 2>/dev/null || true; " +
+                        "cp -a /data/adb/modules/HyperOS3EULocalization/module.prop \"$TMP/module/\" 2>/dev/null || true; " +
+                        "cp -a /data/adb/modules/HyperOS3EULocalization/service.sh \"$TMP/module/\" 2>/dev/null || true; " +
+                        "cp -a /data/adb/modules/HyperOS3EULocalization/system/etc/localization \"$TMP/module/\" 2>/dev/null || true; " +
+                        "cp -a /data/adb/lspd/log/* \"$TMP/lspd/\" 2>/dev/null || true; " +
+                        "cp -a /data/adb/modules/zygisk_lsposed/log/* \"$TMP/lspd/\" 2>/dev/null || true; " +
+                        "cp -a /data/system/dropbox/*wtf* \"$TMP/dropbox/\" 2>/dev/null || true; " +
+                        "cp -a /data/system/dropbox/*crash* \"$TMP/dropbox/\" 2>/dev/null || true; " +
+                        "for pkg in com.miui.voiceassist com.xiaomi.aiasst.service com.xiaomi.aiasst.vision com.miui.personalassistant com.miui.contentcatcher com.miui.contentextension com.miui.gallery com.miui.mediaeditor com.android.packageinstaller com.miui.packageinstaller; do " +
+                        "echo \"===== $pkg =====\" >> \"$TMP/packages.txt\"; " +
+                        "pm path \"$pkg\" >> \"$TMP/packages.txt\" 2>&1; " +
+                        "dumpsys package \"$pkg\" >> \"$TMP/packages.txt\" 2>&1; " +
+                        "done; " +
+                        "settings list system > \"$TMP/settings_system.txt\" 2>&1; " +
+                        "settings list global > \"$TMP/settings_global.txt\" 2>&1; " +
+                        "settings list secure > \"$TMP/settings_secure.txt\" 2>&1; " +
+                        "tar -cf \"$OUT/ErrorLog.tar\" -C \"$TMP\" .; " +
+                        "rm -rf \"$TMP\"; " +
+                        "[ -f \"$OUT/ErrorLog.tar\" ]";
+        if (rootCommandForOutput(command) == null) {
             Toast.makeText(this, processFailedToastString, Toast.LENGTH_SHORT).show();
             return;
         }
